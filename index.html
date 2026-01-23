@@ -120,46 +120,46 @@
         @keyframes breathe { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; text-shadow: 0 0 40px var(--red); } }
 
         /* === RESPONSIVIDADE (CELULAR CORRIGIDA) === */
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             #main-ui {
-                /* Muda o Grid para Vertical: 1fr (conteúdo) e 70px (menu em baixo) */
-                grid-template-columns: 1fr;
-                grid-template-rows: 1fr 70px; 
+                display: flex; /* Mudamos de Grid para Flex para evitar erros de coluna */
+                flex-direction: column; 
+                height: 100vh;
             }
 
             .hud {
-                /* Joga o menu para a linha 2 (em baixo) */
-                grid-row: 2;
-                grid-column: 1;
-                flex-direction: row; /* Ícones lado a lado */
+                order: 2; /* Garante que o menu fique em baixo */
+                flex-direction: row; 
                 justify-content: space-around;
                 width: 100%;
-                border-right: none;
-                border-top: 1px solid rgba(255,255,255,0.1);
-                padding-top: 0;
-            }
+                        height: 70px;
+                        min-height: 70px;
+                        border-right: none;
+                        border-top: 1px solid rgba(255,255,255,0.1);
+                        padding: 0;
+                    }
 
-            .stage {
-                /* Joga o conteúdo para a linha 1 (em cima) */
-                grid-row: 1;
-                grid-column: 1;
-                padding: 30px 20px;
-            }
+                    .stage {
+                        order: 1; /* Conteúdo fica em cima */
+                        flex: 1;
+                        padding: 30px 15px;
+                        overflow-y: auto;
+                    }
 
-            .nav-item { margin-bottom: 0; font-size: 1.8rem; }
-            .nav-item .tooltip, .hud-footer { display: none; }
-            
-            .header-meta { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
-            .timer-box { text-align: center; }
-            .timer-val { font-size: 1.5rem; }
-            h2 { font-size: 1.8rem; text-align: center; }
-            .subtitle { text-align: center; font-size: 0.8rem; }
-            .intro-title { font-size: 2.2rem; letter-spacing: 5px; }
-            .music-terminal { padding: 20px; }
-            .lyric-text { font-size: 1.1rem; }
-            .timeline { margin-left: 0; padding-left: 20px; }
-            .event::after { left: -24px; }
-        }
+                    .nav-item { 
+                        margin-bottom: 0; 
+                        font-size: 1.8rem; 
+                        flex: 1;
+                        height: 100%;
+                    }
+                    
+                    .nav-item .tooltip, .hud-footer { display: none; }
+                    
+                    .header-meta { flex-direction: column; align-items: center; text-align: center; gap: 15px; }
+                    .timer-box { text-align: center; }
+                    .timer-val { font-size: 1.4rem; }
+                    h2 { font-size: 1.6rem; text-align: center; }
+                }
     </style>
 </head>
 <body>
