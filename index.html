@@ -31,10 +31,10 @@
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--red); }
 
-        /* --- LAYOUT GRID (CORRIGIDO) --- */
+        /* --- LAYOUT GRID --- */
         #main-ui { 
             display: grid; 
-            grid-template-columns: 80px 1fr; /* Coluna 1: Menu (80px), Coluna 2: Conteúdo (Resto) */
+            grid-template-columns: 80px 1fr; /* Mantém sempre Coluna 1: Menu (80px), Coluna 2: Conteúdo */
             height: 100vh; 
             opacity: 0; 
             transition: opacity 1.5s ease-in-out; 
@@ -42,7 +42,7 @@
         
         /* --- HUD (MENU LATERAL) --- */
         .hud { 
-            grid-column: 1; /* Garante que fica na primeira coluna */
+            grid-column: 1; 
             border-right: 1px solid rgba(255,255,255,0.05); 
             display: flex; 
             flex-direction: column; 
@@ -62,7 +62,7 @@
 
         /* --- PALCO PRINCIPAL --- */
         .stage { 
-            grid-column: 2; /* Garante que fica na segunda coluna */
+            grid-column: 2; 
             padding: 50px 80px; 
             overflow-y: auto; 
             position: relative; 
@@ -119,47 +119,24 @@
         .access-btn:hover { border-color: var(--red); color: var(--red); box-shadow: 0 0 30px rgba(138,28,28,0.2); }
         @keyframes breathe { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; text-shadow: 0 0 40px var(--red); } }
 
-        /* === RESPONSIVIDADE (CELULAR CORRIGIDA) === */
+        /* === RESPONSIVIDADE (AJUSTADA PARA MANTER HUD LATERAL) === */
         @media (max-width: 1024px) {
-            #main-ui {
-                display: flex; /* Mudamos de Grid para Flex para evitar erros de coluna */
-                flex-direction: column; 
-                height: 100vh;
+            /* Removi o código que transformava em Flex Column. Agora o grid permanece. */
+            
+            .stage {
+                padding: 30px 20px; /* Reduzi apenas o padding para caber melhor */
             }
 
-            .hud {
-                order: 2; /* Garante que o menu fique em baixo */
-                flex-direction: row; 
-                justify-content: space-around;
-                width: 100%;
-                        height: 70px;
-                        min-height: 70px;
-                        border-right: none;
-                        border-top: 1px solid rgba(255,255,255,0.1);
-                        padding: 0;
-                    }
-
-                    .stage {
-                        order: 1; /* Conteúdo fica em cima */
-                        flex: 1;
-                        padding: 30px 15px;
-                        overflow-y: auto;
-                    }
-
-                    .nav-item { 
-                        margin-bottom: 0; 
-                        font-size: 1.8rem; 
-                        flex: 1;
-                        height: 100%;
-                    }
-                    
-                    .nav-item .tooltip, .hud-footer { display: none; }
-                    
-                    .header-meta { flex-direction: column; align-items: center; text-align: center; gap: 15px; }
-                    .timer-box { text-align: center; }
-                    .timer-val { font-size: 1.4rem; }
-                    h2 { font-size: 1.6rem; text-align: center; }
-                }
+            /* Ajustes apenas de tamanho de fonte, sem mudar a posição do menu */
+            .header-meta { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .timer-box { text-align: left; }
+            .timer-val { font-size: 1.4rem; }
+            h2 { font-size: 1.6rem; }
+            .intro-title { font-size: 2.5rem; letter-spacing: 5px; }
+            
+            /* Ocultar tooltip no celular pois não tem mouse hover */
+            .nav-item .tooltip { display: none; }
+        }
     </style>
 </head>
 <body>
