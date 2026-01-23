@@ -2,13 +2,19 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Det & Liz | Nosso Mundo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Det & Liz | Protocolo Amor</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+
+    <meta property="og:title" content="Det & Liz | Nosso Mundo">
+    <meta property="og:description" content="Um lugar guardado no tempo, com nossas memórias.">
+    <meta name="theme-color" content="#8a1c1c">
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        /* --- ESTILO DARK RED --- */
         :root {
             --bg: #050505; 
-            --panel: rgba(15, 15, 15, 0.95);
             --red: #8a1c1c; 
             --red-glow: rgba(138, 28, 28, 0.5);
             --text: #e0e0e0; 
@@ -20,24 +26,50 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: var(--text); font-family: var(--font-mono); height: 100vh; overflow: hidden; }
 
+        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--red); }
 
-        /* --- UI LAYOUT --- */
-        #main-ui { display: grid; grid-template-columns: 80px 1fr; height: 100vh; opacity: 0; transition: opacity 1.5s ease-in-out; }
+        /* --- LAYOUT GRID (CORRIGIDO) --- */
+        #main-ui { 
+            display: grid; 
+            grid-template-columns: 80px 1fr; /* Coluna 1: Menu (80px), Coluna 2: Conteúdo (Resto) */
+            height: 100vh; 
+            opacity: 0; 
+            transition: opacity 1.5s ease-in-out; 
+        }
         
-        /* HUD Lateral */
-        .hud { border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; padding-top: 40px; background: rgba(5,5,5,0.9); z-index: 10; }
-        .nav-item { margin-bottom: 40px; color: var(--dim); transition: 0.3s; font-size: 1.5rem; position: relative; cursor: pointer; }
-        .nav-item:hover, .nav-item.active { color: var(--red); text-shadow: 0 0 15px var(--red-glow); transform: scale(1.1); }
-        .nav-item .tooltip { position: absolute; left: 50px; background: var(--bg); border: 1px solid var(--red); padding: 5px 10px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; z-index: 20; }
-        .nav-item:hover .tooltip { opacity: 1; left: 60px; }
+        /* --- HUD (MENU LATERAL) --- */
+        .hud { 
+            grid-column: 1; /* Garante que fica na primeira coluna */
+            border-right: 1px solid rgba(255,255,255,0.05); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding-top: 40px; 
+            background: rgba(5,5,5,0.95); 
+            z-index: 10; 
+        }
 
-        /* Palco Principal */
-        .stage { padding: 50px 80px; overflow-y: auto; position: relative; background: radial-gradient(circle at top right, rgba(138,28,28,0.08), transparent 50%); }
+        .nav-item { margin-bottom: 40px; color: var(--dim); transition: 0.3s; font-size: 1.5rem; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; }
+        .nav-item:hover, .nav-item.active { color: var(--red); text-shadow: 0 0 15px var(--red-glow); transform: scale(1.1); }
         
-        /* HEADER REFORMULADO */
+        .nav-item .tooltip { position: absolute; left: 60px; background: var(--bg); border: 1px solid var(--red); padding: 5px 10px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; z-index: 20; }
+        .nav-item:hover .tooltip { opacity: 1; left: 70px; }
+
+        .hud-footer { margin-top: auto; margin-bottom: 20px; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--dim); font-size: 0.6rem; letter-spacing: 2px; opacity: 0.5; }
+
+        /* --- PALCO PRINCIPAL --- */
+        .stage { 
+            grid-column: 2; /* Garante que fica na segunda coluna */
+            padding: 50px 80px; 
+            overflow-y: auto; 
+            position: relative; 
+            background: radial-gradient(circle at top right, rgba(138,28,28,0.08), transparent 50%); 
+        }
+        
+        /* HEADER */
         .header-meta { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; border-bottom: 1px solid rgba(138, 28, 28, 0.3); padding-bottom: 15px; }
         .sys-info { font-size: 0.8rem; color: var(--dim); line-height: 1.6; letter-spacing: 1px; }
         .sys-info span { color: var(--text); font-weight: bold; text-transform: uppercase; }
@@ -47,31 +79,16 @@
         .timer-label { font-size: 0.6rem; color: var(--dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; }
         .timer-val { font-family: var(--font-display); font-size: 2rem; color: var(--text); text-shadow: 0 0 10px rgba(255,255,255,0.1); }
 
-        /* ANIMAÇÕES */
-        .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); }
-        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
-
-        /* ELEMENTOS VISUAIS */
+        /* ELEMENTOS GERAIS */
         h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
         .subtitle { color: var(--red); font-size: 0.9rem; margin-bottom: 40px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.9; }
+        .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); width: 100%; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* CARD DE MÚSICA */
-        .music-terminal { border: 1px solid rgba(138,28,28,0.3); background: rgba(0,0,0,0.4); padding: 40px; text-align: center; position: relative; border-radius: 4px; }
+        /* MÚSICA */
+        .music-terminal { border: 1px solid rgba(138,28,28,0.3); background: rgba(0,0,0,0.4); padding: 40px; text-align: center; border-radius: 4px; }
         .lyric-text { font-family: var(--font-display); font-size: 1.5rem; font-style: italic; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s; color: #fff; text-shadow: 0 0 10px rgba(138,28,28,0.3); }
-        
-        /* ESTILO NOVO PARA O CANTOR */
-        .song-info {
-            display: block;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--red);
-            margin-top: 15px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            opacity: 0.9;
-            font-style: normal; /* Remove itálico do nome */
-        }
-
+        .song-info { display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--red); margin-top: 15px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; font-style: normal; }
         .spotify-btn { margin-top: 30px; display: inline-block; font-size: 0.75rem; letter-spacing: 2px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--red); padding-bottom: 5px; transition: 0.3s; text-transform: uppercase; }
         .spotify-btn:hover { color: var(--red); border-bottom-color: transparent; text-shadow: 0 0 10px var(--red); }
 
@@ -84,53 +101,65 @@
         .event-title { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; color: #fff; }
         .event-desc { font-size: 0.9rem; color: #999; max-width: 500px; line-height: 1.6; }
 
-        /* HUB / MURAL */
+        /* MURAL */
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-        
-        .hub-card { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.05); 
-            padding: 20px; 
-            transition: 0.4s; 
-            display: flex; 
-            flex-direction: column; 
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .hud-footer {
-        margin-top: auto;        /* Empurra o texto para o fundo */
-        margin-bottom: 20px;     /* Afasta um pouco da borda de baixo */
-        writing-mode: vertical-rl; 
-        transform: rotate(180deg);
-        color: var(--dim);
-        font-size: 0.6rem;
-        letter-spacing: 2px;
-        opacity: 0.5;
-        }
-        
-
+        .hub-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; transition: 0.4s; display: flex; flex-direction: column; border-radius: 4px; overflow: hidden; }
         .hub-card:hover { border-color: var(--red); transform: translateY(-5px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6); }
-
         .note-title { font-size: 0.7rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; }
         .note-content { font-size: 0.95rem; line-height: 1.6; color: #ddd; font-family: var(--font-display); }
-
         .photo-frame { width: 100%; height: 200px; overflow: hidden; margin-bottom: 15px; border-radius: 2px; }
         .photo-frame img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.8; }
         .hub-card:hover .photo-frame img { transform: scale(1.05); opacity: 1; }
         .photo-caption { font-size: 0.8rem; color: #aaa; font-style: italic; text-align: center; }
 
-        /* INTRO SCREEN */
-        #intro { position: fixed; inset: 0; background: #020202; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        /* INTRO */
+        #intro { position: fixed; inset: 0; background: #020202; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         .intro-title { font-family: var(--font-display); font-size: 4rem; letter-spacing: 10px; color: #fff; margin-bottom: 30px; text-shadow: 0 0 30px var(--red-glow); animation: breathe 4s infinite ease-in-out; }
         .access-btn { background: transparent; border: 1px solid var(--dim); color: var(--dim); padding: 15px 50px; font-family: var(--font-mono); letter-spacing: 6px; font-size: 0.8rem; transition: 0.5s; cursor: pointer; text-transform: uppercase; }
         .access-btn:hover { border-color: var(--red); color: var(--red); box-shadow: 0 0 30px rgba(138,28,28,0.2); }
-        
-        
-
         @keyframes breathe { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; text-shadow: 0 0 40px var(--red); } }
 
+        /* === RESPONSIVIDADE (CELULAR CORRIGIDA) === */
+        @media (max-width: 768px) {
+            #main-ui {
+                /* Muda o Grid para Vertical: 1fr (conteúdo) e 70px (menu em baixo) */
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 70px; 
+            }
+
+            .hud {
+                /* Joga o menu para a linha 2 (em baixo) */
+                grid-row: 2;
+                grid-column: 1;
+                flex-direction: row; /* Ícones lado a lado */
+                justify-content: space-around;
+                width: 100%;
+                border-right: none;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                padding-top: 0;
+            }
+
+            .stage {
+                /* Joga o conteúdo para a linha 1 (em cima) */
+                grid-row: 1;
+                grid-column: 1;
+                padding: 30px 20px;
+            }
+
+            .nav-item { margin-bottom: 0; font-size: 1.8rem; }
+            .nav-item .tooltip, .hud-footer { display: none; }
+            
+            .header-meta { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+            .timer-box { text-align: center; }
+            .timer-val { font-size: 1.5rem; }
+            h2 { font-size: 1.8rem; text-align: center; }
+            .subtitle { text-align: center; font-size: 0.8rem; }
+            .intro-title { font-size: 2.2rem; letter-spacing: 5px; }
+            .music-terminal { padding: 20px; }
+            .lyric-text { font-size: 1.1rem; }
+            .timeline { margin-left: 0; padding-left: 20px; }
+            .event::after { left: -24px; }
+        }
     </style>
 </head>
 <body>
@@ -149,7 +178,7 @@
                 <span>∞</span><div class="tooltip">Linha do Tempo</div>
             </div>
             <div class="nav-item" onclick="loadTab('notes', this)">
-                <span>♥</span><div class="tooltip">Mural de Memórias</div>
+                <span>♥</span><div class="tooltip">Mural</div>
             </div>
 
             <div class="hud-footer">designed by Dπt • 2026</div>
@@ -160,7 +189,7 @@
                 <div class="sys-info">
                     NOSSO MUNDO<br>
                     <span class="highlight">Det & Liz</span><br>
-                    Status: <span>Iludidos</span>
+                    Status: <span>Conectados</span>
                 </div>
                 <div class="timer-box">
                     <div class="timer-label">Tempo Juntos</div>
@@ -174,99 +203,31 @@
     </div>
 
     <script>
-        // === SUA DATA DE INÍCIO AQUI ===
         const startDate = new Date(2026, 0, 21); // 21 de janeiro de 2026
         
-        // === LISTA DE MÚSICAS ===
         const musicPlaylist = [
-            {
-                verse: "Eu disfarço, nego, minto… mas o coração sempre entrega o que sente.",
-                song: "Chitãozinho & Xororó — Evidências"
-            },
-            {
-                verse: "O que você fez em menos de um mês nenhuma outra fez.",
-                song: "Matheus & Kauan — Te Assumi Pro Brasil"
-            },
-            {
-                verse: "E nessa loucura de dizer que não te quero, vou negando as aparências, disfarçando as evidências...",
-                song: "Chitãozinho & Xororó — Evidências"
-            },
-            {
-                verse: "É por você que canto, é por você que eu vivo... O universo conspira a nosso favor.",
-                song: "Leandro & Leonardo — É Por Você Que Canto"
-            },
-            {
-                verse: "Eu quero ser pra você o que ninguém nunca foi. Quero seu amor agora e o resto depois.",
-                song: "Cristiano Araújo — Caso Indefinido"
-            },
-            {
-                verse: "Eu troco meu destino só pra viver o seu, porque meu lugar é onde você estiver.",
-                song: "Luan Santana — Tudo Que Você Quiser"
-            },
-            {
-                verse: "Você me mostrou o amor… e eu te mostrei ao mundo. Em pouco tempo, você fez o que ninguém fez.",
-                song: "Henrique & Juliano — Flor e o Beija-Flor"
-            },    
-            {
-                verse: "Se for pra errar, que seja tentando te amar.",
-                song: "Jorge & Mateus — De Tanto Te Querer"
-            },
-            {
-                verse: "Entre tantas pessoas, foi você quem meu coração escolheu.",
-                song: "Victor & Leo — Borboletas"
-            },
-            {
-                verse: "Tem sentimentos que a gente tenta calar, mas o coração insiste em lembrar.",
-                song: "Zezé Di Camargo & Luciano — Pra Não Pensar em Você"
-            },
-            {
-                verse: "Tem história que começa simples e vira eternidade.",
-                song: "Matheus & Kauan — O Nosso Santo Bateu"
-            },
-            {
-                verse: "Eu tentei te esquecer, mas foi você que nunca saiu de mim.",
-                song: "Matogrosso & Mathias — Tentei Te Esquecer"
-            },
-            {
-                verse: "O amor é isso: quando a gente percebe, já é tarde pra fugir.",
-                song: "Henrique & Juliano — Arranhão"
-            },
-            {
-                verse: "Se amar fosse fácil, não seria tão intenso.",
-                song: "Marília Mendonça — De Quem É a Culpa?"
-            },
-            {
-                verse: "Você chegou e bagunçou tudo, mas do jeito que eu sempre quis.",
-                song: "Gusttavo Lima — Bloqueado"
-            },
-            {
-                verse: "Se for pra ser, que seja com você.",
-                song: "Jorge & Mateus — Logo Eu"
-            },
-            {
-                verse: "Mesmo negando, o coração sempre entrega a verdade.",
-                song: "Evidências — Chitãozinho & Xororó"
-            },
-            {
-                verse: "Entre tantas histórias, eu escolhi viver a nossa.",
-                song: "O Nosso Santo Bateu — Matheus & Kauan"
-            },
-            {
-                verse: "Você virou parte da minha história sem pedir permissão.",
-                song: "Evidências — Chitãozinho & Xororó"
-            },
-            {
-                verse: "Entre todas as escolhas da vida, você foi a melhor.",
-                song: "Os Anjos Cantam — Jorge & Mateus"
-            },
-            {
-                verse: "Daria a minha vida por um beijo seu, daria o meu mundo pra te ter aqui.",
-                song: "Zezé Di Camargo & Luciano — Dou a Vida por um Beijo"
-            },
-            {
-                verse: "Enquanto houver razões eu não desisto de você.",
-                song: "Jorge & Mateus — Enquanto Houver Razões"
-            },
+            { verse: "Eu disfarço, nego, minto… mas o coração sempre entrega o que sente.", song: "Chitãozinho & Xororó — Evidências" },
+            { verse: "O que você fez em menos de um mês nenhuma outra fez.", song: "Matheus & Kauan — Te Assumi Pro Brasil" },
+            { verse: "E nessa loucura de dizer que não te quero, vou negando as aparências...", song: "Evidências" },
+            { verse: "É por você que canto, é por você que eu vivo... O universo conspira a nosso favor.", song: "Leandro & Leonardo" },
+            { verse: "Eu quero ser pra você o que ninguém nunca foi. Quero seu amor agora e o resto depois.", song: "Cristiano Araújo" },
+            { verse: "Eu troco meu destino só pra viver o seu, porque meu lugar é onde você estiver.", song: "Luan Santana" },
+            { verse: "Você me mostrou o amor… e eu te mostrei ao mundo.", song: "Henrique & Juliano" },    
+            { verse: "Se for pra errar, que seja tentando te amar.", song: "Jorge & Mateus" },
+            { verse: "Entre tantas pessoas, foi você quem meu coração escolheu.", song: "Victor & Leo" },
+            { verse: "Tem sentimentos que a gente tenta calar, mas o coração insiste em lembrar.", song: "Zezé Di Camargo" },
+            { verse: "Tem história que começa simples e vira eternidade.", song: "Matheus & Kauan" },
+            { verse: "Eu tentei te esquecer, mas foi você que nunca saiu de mim.", song: "Matogrosso & Mathias" },
+            { verse: "O amor é isso: quando a gente percebe, já é tarde pra fugir.", song: "Henrique & Juliano" },
+            { verse: "Se amar fosse fácil, não seria tão intenso.", song: "Marília Mendonça" },
+            { verse: "Você chegou e bagunçou tudo, mas do jeito que eu sempre quis.", song: "Gusttavo Lima" },
+            { verse: "Se for pra ser, que seja com você.", song: "Jorge & Mateus" },
+            { verse: "Mesmo negando, o coração sempre entrega a verdade.", song: "Evidências" },
+            { verse: "Entre tantas histórias, eu escolhi viver a nossa.", song: "O Nosso Santo Bateu" },
+            { verse: "Você virou parte da minha história sem pedir permissão.", song: "Evidências" },
+            { verse: "Entre todas as escolhas da vida, você foi a melhor.", song: "Os Anjos Cantam" },
+            { verse: "Daria a minha vida por um beijo seu, daria o meu mundo pra te ter aqui.", song: "Zezé Di Camargo" },
+            { verse: "Enquanto houver razões eu não desisto de você.", song: "Jorge & Mateus" },
         ];
 
         function unlock() {
@@ -282,17 +243,16 @@
         let lyricsInterval;
 
         const db = {
-            // --- ABA 1: DASHBOARD (HOME) ---
             dash: `
                 <div class="content-gate">
-                    <h2>Bem-vindo(a), </h2>
+                    <h2>Bem-vindo(a),</h2>
                     <div class="subtitle">Simplesmente nós dois.</div>
                     
                     <div class="music-terminal">
                         <div style="font-size:0.7rem; color:var(--red); letter-spacing:3px; margin-bottom:20px; text-transform:uppercase;">Tocando no Coração</div>
                         <div id="lyrics-display" class="lyric-text">"Carregando..."</div>
                         
-                        <a href="https://open.spotify.com/playlist/04jW7XU5ozWj0RkxvYwQ2r?si=8b0c8b0c8b0c" target="_blank" class="spotify-btn">
+                        <a href="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" target="_blank" class="spotify-btn">
                             Abrir Nossa Playlist
                         </a>
                     </div>
@@ -309,8 +269,6 @@
                     </div>
                 </div>
             `,
-
-            // --- ABA 2: TIMELINE (HISTÓRIA) ---
             time: `
                 <div class="content-gate">
                     <h2>Linha do Tempo</h2>
@@ -324,86 +282,73 @@
                         </div>
                         <div class="event">
                             <div class="event-date">22.01.2026</div>
-                            <div class="event-title">Primeira partida de free fire</div>
+                            <div class="event-title">Primeira partida de Free Fire</div>
                             <div class="event-desc">Lembra daquele x1? insano demais.</div>
                         </div>
                         <div class="event">
                             <div class="event-date">HOJE</div>
-                            <div class="event-title">Gfzão insano</div>
-                            <div class="event-desc">Tudo que eu mais queria rs.</div>
+                            <div class="event-title">Cada Dia Mais</div>
+                            <div class="event-desc">Construindo nossa história, um dia de cada vez.</div>
                         </div>
                     </div>
                 </div>
             `,
-
-            // --- ABA 3: MURAL (HUB DE FOTOS E TEXTO) ---
             notes: `
                 <div class="content-gate">
                     <h2>Mural de Memórias</h2>
                     <div class="subtitle">Nossos Momentos.</div>
                     
                     <div class="gallery-grid">
-                        
                         <div class="hub-card">
                             <div class="note-title">Sobre sua picareta</div>
                             <div class="note-content">
                                 "O jeito que vc me mostra essa picaretona me encanta rs"
                             </div>
                         </div>
-
                         <div class="hub-card">
                             <div class="photo-frame">
                                 <img src="https://preview.redd.it/origin-of-this-image-v0-mezrnhfpgz4c1.jpg?width=649&format=pjpg&auto=webp&s=0897126562b960b1adb3fd424f1116034c35cf21" alt="Nós">
                             </div>
                             <div class="photo-caption">Nosso futuro fiote.</div>
                         </div>
-
                         <div class="hub-card">
                             <div class="note-title">Nerdice</div>
                             <div class="note-content">
-                                "toma vergonha, ninguém te ama, but"
+                                "toma vergonha, ninguém te ama, but..."
                             </div>
                         </div>
-
                         <div class="hub-card">
                             <div class="photo-frame">
-                                <img src="data:image/jpeg;base64,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" alt="Viagem">
+                                <img src="https://wallpapers.com/images/hd/cute-anime-couple-matching-pfp-profile-picture-30-2p7d6n7s2j8k9l0m.jpg" alt="Viagem">
                             </div>
                             <div class="photo-caption">Nerdola.</div>
                         </div>
-
                         <div class="hub-card">
                             <div class="note-title">Lembrete Diário</div>
                             <div class="note-content">
-                                "2x gf por dia"
+                                "Não esquece o gfzão de lei"
                             </div>
                         </div>
-
                         <div class="hub-card">
-                            <div class="note-title">Lembrete Anual</div>
+                            <div class="note-title">Meta Anual</div>
                             <div class="note-content">
                                 "x1 no free fire valendo robux"
                             </div>
                         </div>
-
-                        </div>
+                    </div>
                 </div>
             `
         };
 
         function loadTab(key, el) {
-            // Limpa intervalo anterior se houver
             if (lyricsInterval) clearInterval(lyricsInterval);
-            
-            // Carrega conteúdo
             document.getElementById('dynamic-area').innerHTML = db[key];
-            
-            // Atualiza menu
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if(el) el.classList.add('active');
-            else document.querySelector('.nav-item').classList.add('active');
-
-            // Se for a aba Dash, inicia animação da música
+            if(el) {
+                el.classList.add('active');
+            } else {
+                if(key === 'dash') document.querySelectorAll('.nav-item')[0].classList.add('active');
+            }
             if (key === 'dash') startLyricsAnimation();
         }
 
@@ -411,28 +356,19 @@
             let index = 0;
             const el = document.getElementById('lyrics-display');
             if(!el) return;
-
-            // Função interna para montar o HTML (Verso + Cantor)
             const renderMusic = (idx) => {
                 const item = musicPlaylist[idx];
-                el.innerHTML = `
-                    "${item.verse}"
-                    <span class="song-info">♫ ${item.song}</span>
-                `;
+                el.innerHTML = `"${item.verse}"<span class="song-info">♫ ${item.song}</span>`;
             };
-
-            // Primeira execução imediata
             renderMusic(0);
-
-            // Intervalo de troca
             lyricsInterval = setInterval(() => {
-                el.style.opacity = 0; // Fade Out
+                el.style.opacity = 0; 
                 setTimeout(() => {
                     index = (index + 1) % musicPlaylist.length;
-                    renderMusic(index); // Troca texto
-                    el.style.opacity = 1; // Fade In
-                }, 1000); // 1s de transição
-            }, 6000); // 6s para ler
+                    renderMusic(index); 
+                    el.style.opacity = 1; 
+                }, 1000); 
+            }, 6000); 
         }
 
         function updateClock() {
@@ -441,12 +377,11 @@
             const d = Math.floor(diff / (1000*60*60*24));
             const h = Math.floor((diff/(1000*60*60))%24);
             const m = Math.floor((diff/(1000*60))%60);
-            const s = Math.floor((diff/1000)%60);
-            document.getElementById('clock').innerText = `${d}d ${h}h ${m}m`;
+            const clockEl = document.getElementById('clock');
+            if(clockEl) clockEl.innerText = `${d}d ${h}h ${m}m`;
         }
         setInterval(updateClock, 1000);
         updateClock();
-
     </script>
 </body>
 </html>
