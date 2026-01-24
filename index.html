@@ -35,19 +35,19 @@
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
 
-        /* --- FUNDO ESTRELADO --- */
+        /* --- FUNDO ESTRELADO (AJUSTADO: Mais brilhante) --- */
         .stars {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; /* Fica atrás de tudo, mas visível se o fundo for transparente */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; /* Z-index 1 para garantir que fique acima do background base */
             background-image: 
-                radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 50px 160px, #fff, rgba(0,0,0,0)),
-                radial-gradient(1.5px 1.5px at 90px 40px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+                radial-gradient(1.5px 1.5px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2.5px 2.5px at 130px 80px, #fff, rgba(0,0,0,0));
             background-repeat: repeat;
             background-size: 200px 200px;
-            opacity: 0.4;
-            animation: twinkle 10s infinite linear;
+            opacity: 0.8; /* Aumentei a opacidade para aparecerem melhor */
+            animation: twinkle 8s infinite linear;
         }
         @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-200px); } }
 
@@ -71,9 +71,9 @@
             flex-direction: column; 
             align-items: center; 
             padding-top: 40px; 
-            background: rgba(5,5,5,0.7); /* Mais transparente para ver estrelas levemente */
+            background: rgba(5,5,5,0.7); 
             backdrop-filter: blur(15px); 
-            z-index: 10; 
+            z-index: 20; 
         }
 
         .nav-item { margin-bottom: 40px; color: var(--dim); transition: 0.4s; font-size: 1.5rem; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; }
@@ -90,7 +90,8 @@
             padding: 50px 80px; 
             overflow-y: auto; 
             position: relative; 
-            background: radial-gradient(circle at top right, rgba(138,28,28,0.06), transparent 60%); 
+            /* Gradiente sutil para não esconder as estrelas completamente */
+            background: radial-gradient(circle at top right, rgba(138,28,28,0.08), transparent 70%); 
         }
         
         /* HEADER */
@@ -111,7 +112,7 @@
         .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); width: 100%; padding-bottom: 50px; }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* FRASE FINAL (FIX PARA MOBILE) */
+        /* FRASE FINAL */
         .quote-container { margin-top: 70px; text-align: center; padding: 0 10px; }
         .quote-icon { font-size: 3rem; color: var(--red); margin-bottom: 10px; opacity: 0.5; }
         .quote-text { font-family: var(--font-display); font-size: 1.1rem; color: #bbb; line-height: 1.9; max-width: 600px; margin: 0 auto; letter-spacing: 0.5px; }
@@ -146,11 +147,12 @@
         .hub-card:hover .photo-frame img { transform: scale(1.08); opacity: 1; filter: grayscale(0%); }
         .photo-caption { font-size: 0.75rem; color: #888; font-style: italic; text-align: center; margin-top: 5px; }
 
-        /* INTRO */
+        /* INTRO (AJUSTADO: Mais transparente) */
         #intro { 
             position: fixed; inset: 0; 
-            background: rgba(2, 2, 2, 0.85); /* Fundo translúcido para ver as estrelas */
-            backdrop-filter: blur(3px); 
+            /* Reduzi a opacidade de 0.85 para 0.6 para as estrelas aparecerem */
+            background: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(2px); 
             z-index: 100; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
             transition: opacity 0.8s ease; 
@@ -175,19 +177,13 @@
         }
         
         @media (max-width: 600px) {
-            /* Mobile: Grade em 1 coluna */
             .gallery-grid { grid-template-columns: 1fr; }
-            /* Mobile: Menu lateral mais fino e ícones menores */
             .hud { padding-top: 20px; width: 60px; }
             #main-ui { grid-template-columns: 60px 1fr; }
             .nav-item { width: 35px; height: 35px; font-size: 1rem; margin-bottom: 30px; }
-            .hud-footer { margin-bottom: 100px; } /* Sobe o crédito para não cortar */
-            
-            /* Ajuste da Timeline */
+            .hud-footer { margin-bottom: 100px; }
             .event::after { left: -34px; } 
             .timeline { margin-left: 0; padding-left: 30px; }
-            
-            /* Correção da Frase (Quote) */
             .quote-text { font-size: 0.95rem; width: 100%; padding: 0 5px; }
             .music-terminal { padding: 30px 15px; }
             .lyric-text { font-size: 1.2rem; }
