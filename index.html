@@ -15,25 +15,44 @@
     <style>
         :root {
             --bg: #050505; 
-            --red: #ff2e2e; /* O novo vermelho mais vivo */
-            --red-glow: rgba(255, 46, 46, 0.4); /* Glow acompanhando a cor */
+            --red: #ff2e2e; 
+            --red-glow: rgba(255, 46, 46, 0.4);
+            --red-dim: rgba(138, 28, 28, 0.3);
             --text: #e0e0e0; 
             --dim: #888;
             --font-display: 'Cinzel', serif; 
             --font-mono: 'JetBrains Mono', monospace;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: var(--font-mono); height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); font-family: var(--font-mono); height: 100vh; overflow: hidden; position: relative; }
 
         /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--red); }
+        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+
+        /* --- FUNDO ESTRELADO (NOVIDADE) --- */
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 50px 160px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.3;
+            animation: twinkle 10s infinite linear;
+        }
+        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-200px); } }
 
         /* --- LAYOUT GRID --- */
         #main-ui { 
             display: grid; 
-            grid-template-columns: 80px 1fr; /* Mantém sempre Coluna 1: Menu (80px), Coluna 2: Conteúdo */
+            grid-template-columns: 80px 1fr; 
             height: 100vh; 
             opacity: 0; 
             transition: opacity 1.5s ease-in-out; 
@@ -42,22 +61,23 @@
         /* --- HUD (MENU LATERAL) --- */
         .hud { 
             grid-column: 1; 
-            border-right: 1px solid rgba(255,255,255,0.05); 
+            border-right: 1px solid var(--glass-border); 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             padding-top: 40px; 
-            background: rgba(5,5,5,0.95); 
+            background: rgba(5,5,5,0.85); 
+            backdrop-filter: blur(10px); /* Efeito Vidro */
             z-index: 10; 
         }
 
-        .nav-item { margin-bottom: 40px; color: var(--dim); transition: 0.3s; font-size: 1.5rem; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; }
-        .nav-item:hover, .nav-item.active { color: var(--red); text-shadow: 0 0 15px var(--red-glow); transform: scale(1.1); }
+        .nav-item { margin-bottom: 40px; color: var(--dim); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-size: 1.5rem; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; }
+        .nav-item:hover, .nav-item.active { color: var(--red); text-shadow: 0 0 15px var(--red-glow); transform: scale(1.15); background: rgba(255, 46, 46, 0.05); }
         
-        .nav-item .tooltip { position: absolute; left: 60px; background: var(--bg); border: 1px solid var(--red); padding: 5px 10px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; z-index: 20; }
+        .nav-item .tooltip { position: absolute; left: 60px; background: rgba(0,0,0,0.9); border: 1px solid var(--red); padding: 5px 12px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; z-index: 20; border-radius: 2px; box-shadow: 0 0 10px var(--red-glow); }
         .nav-item:hover .tooltip { opacity: 1; left: 70px; }
 
-        .hud-footer { margin-top: auto; margin-bottom: 20px; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--dim); font-size: 0.6rem; letter-spacing: 2px; opacity: 0.5; }
+        .hud-footer { margin-top: auto; margin-bottom: 20px; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--dim); font-size: 0.6rem; letter-spacing: 2px; opacity: 0.4; }
 
         /* --- PALCO PRINCIPAL --- */
         .stage { 
@@ -65,80 +85,93 @@
             padding: 50px 80px; 
             overflow-y: auto; 
             position: relative; 
-            background: radial-gradient(circle at top right, rgba(138,28,28,0.08), transparent 50%); 
+            background: radial-gradient(circle at top right, rgba(138,28,28,0.06), transparent 60%); 
         }
         
         /* HEADER */
-        .header-meta { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; border-bottom: 1px solid rgba(138, 28, 28, 0.3); padding-bottom: 15px; }
+        .header-meta { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 50px; border-bottom: 1px solid var(--red-dim); padding-bottom: 20px; }
         .sys-info { font-size: 0.8rem; color: var(--dim); line-height: 1.6; letter-spacing: 1px; }
         .sys-info span { color: var(--text); font-weight: bold; text-transform: uppercase; }
-        .sys-info .highlight { color: var(--red); }
+        .sys-info .highlight { color: var(--red); text-shadow: 0 0 5px var(--red-glow); }
         
         .timer-box { text-align: right; }
-        .timer-label { font-size: 0.6rem; color: var(--dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; }
-        .timer-val { font-family: var(--font-display); font-size: 2rem; color: var(--text); text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        .timer-label { font-size: 0.65rem; color: var(--dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; }
+        .timer-val { font-family: var(--font-display); font-size: 1.8rem; color: var(--text); text-shadow: 0 0 15px rgba(255,255,255,0.05); }
+        .timer-val span { font-size: 1rem; color: var(--dim); margin-left: 5px; }
 
         /* ELEMENTOS GERAIS */
-        h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
-        .subtitle { color: var(--red); font-size: 0.9rem; margin-bottom: 40px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.9; }
-        .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(20px); width: 100%; }
+        h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 10px; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { color: var(--red); font-size: 0.85rem; margin-bottom: 40px; letter-spacing: 4px; text-transform: uppercase; opacity: 0.9; }
+        
+        .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); width: 100%; }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
         /* MÚSICA */
-        .music-terminal { border: 1px solid rgba(138,28,28,0.3); background: rgba(0,0,0,0.4); padding: 40px; text-align: center; border-radius: 4px; }
-        .lyric-text { font-family: var(--font-display); font-size: 1.5rem; font-style: italic; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s; color: #fff; text-shadow: 0 0 10px rgba(138,28,28,0.3); }
-        .song-info { display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--red); margin-top: 15px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; font-style: normal; }
-        .spotify-btn { margin-top: 30px; display: inline-block; font-size: 0.75rem; letter-spacing: 2px; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--red); padding-bottom: 5px; transition: 0.3s; text-transform: uppercase; }
-        .spotify-btn:hover { color: var(--red); border-bottom-color: transparent; text-shadow: 0 0 10px var(--red); }
+        .music-terminal { border: 1px solid var(--red-dim); background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); padding: 50px; text-align: center; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .lyric-text { font-family: var(--font-display); font-size: 1.6rem; font-style: italic; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s; color: #fff; text-shadow: 0 0 15px rgba(138,28,28,0.4); line-height: 1.4; }
+        .song-info { display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--red); margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; font-style: normal; }
+        
+        .spotify-btn { margin-top: 35px; display: inline-block; font-size: 0.7rem; letter-spacing: 3px; color: var(--text); text-decoration: none; border: 1px solid var(--red-dim); padding: 12px 30px; transition: 0.3s; text-transform: uppercase; border-radius: 2px; }
+        .spotify-btn:hover { background: var(--red-glow); border-color: var(--red); box-shadow: 0 0 20px var(--red-glow); }
 
         /* TIMELINE */
-        .timeline { border-left: 1px solid rgba(255,255,255,0.1); margin-left: 10px; padding-left: 40px; }
-        .event { position: relative; margin-bottom: 50px; }
-        .event::after { content: ''; position: absolute; left: -44px; top: 6px; width: 7px; height: 7px; background: var(--bg); border: 1px solid var(--red); border-radius: 50%; transition: 0.3s; }
-        .event:hover::after { background: var(--red); box-shadow: 0 0 10px var(--red); }
-        .event-date { font-size: 0.7rem; color: var(--red); letter-spacing: 2px; margin-bottom: 5px; font-weight: bold; }
-        .event-title { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; color: #fff; }
-        .event-desc { font-size: 0.9rem; color: #999; max-width: 500px; line-height: 1.6; }
+        .timeline { border-left: 1px solid rgba(255,255,255,0.08); margin-left: 10px; padding-left: 40px; }
+        .event { position: relative; margin-bottom: 60px; }
+        .event::after { content: ''; position: absolute; left: -44px; top: 6px; width: 7px; height: 7px; background: var(--bg); border: 1px solid var(--red); border-radius: 50%; transition: 0.3s; box-shadow: 0 0 0 4px var(--bg); }
+        .event:hover::after { background: var(--red); box-shadow: 0 0 15px var(--red), 0 0 0 4px var(--bg); }
+        .event-date { font-size: 0.7rem; color: var(--red); letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; opacity: 0.9; }
+        .event-title { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
+        .event-desc { font-size: 0.9rem; color: #999; max-width: 550px; line-height: 1.7; }
 
         /* MURAL */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-        .hub-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 20px; transition: 0.4s; display: flex; flex-direction: column; border-radius: 4px; overflow: hidden; }
-        .hub-card:hover { border-color: var(--red); transform: translateY(-5px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6); }
-        .note-title { font-size: 0.7rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; }
-        .note-content { font-size: 0.95rem; line-height: 1.6; color: #ddd; font-family: var(--font-display); }
-        .photo-frame { width: 100%; height: 200px; overflow: hidden; margin-bottom: 15px; border-radius: 2px; }
-        .photo-frame img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; opacity: 0.8; }
-        .hub-card:hover .photo-frame img { transform: scale(1.05); opacity: 1; }
-        .photo-caption { font-size: 0.8rem; color: #aaa; font-style: italic; text-align: center; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 30px; }
+        .hub-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 20px; transition: 0.4s; display: flex; flex-direction: column; border-radius: 6px; overflow: hidden; position: relative; }
+        .hub-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--red); transform: scaleX(0); transition: 0.4s; transform-origin: left; }
+        .hub-card:hover { transform: translateY(-7px); box-shadow: 0 15px 40px -10px rgba(0,0,0,0.7); border-color: rgba(255,255,255,0.1); }
+        .hub-card:hover::before { transform: scaleX(1); }
+        
+        .note-title { font-size: 0.65rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; display: flex; justify-content: space-between; }
+        .note-content { font-size: 0.95rem; line-height: 1.7; color: #ddd; font-family: var(--font-display); }
+        .photo-frame { width: 100%; height: 220px; overflow: hidden; margin-bottom: 15px; border-radius: 3px; position: relative; }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; transition: 0.7s; opacity: 0.85; filter: grayscale(30%); }
+        .hub-card:hover .photo-frame img { transform: scale(1.08); opacity: 1; filter: grayscale(0%); }
+        .photo-caption { font-size: 0.75rem; color: #888; font-style: italic; text-align: center; margin-top: 5px; }
 
         /* INTRO */
-        #intro { position: fixed; inset: 0; background: #020202; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .intro-title { font-family: var(--font-display); font-size: 4rem; letter-spacing: 10px; color: #fff; margin-bottom: 30px; text-shadow: 0 0 30px var(--red-glow); animation: breathe 4s infinite ease-in-out; }
-        .access-btn { background: transparent; border: 1px solid var(--dim); color: var(--dim); padding: 15px 50px; font-family: var(--font-mono); letter-spacing: 6px; font-size: 0.8rem; transition: 0.5s; cursor: pointer; text-transform: uppercase; }
-        .access-btn:hover { border-color: var(--red); color: var(--red); box-shadow: 0 0 30px rgba(138,28,28,0.2); }
-        @keyframes breathe { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; text-shadow: 0 0 40px var(--red); } }
+        #intro { position: fixed; inset: 0; background: #020202; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.8s ease; }
+        .intro-title { font-family: var(--font-display); font-size: 4rem; letter-spacing: 12px; color: #fff; margin-bottom: 40px; text-shadow: 0 0 30px var(--red-glow); animation: breathe 4s infinite ease-in-out; }
+        .access-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--dim); padding: 18px 60px; font-family: var(--font-mono); letter-spacing: 6px; font-size: 0.8rem; transition: 0.5s; cursor: pointer; text-transform: uppercase; position: relative; overflow: hidden; }
+        .access-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 46, 46, 0.2), transparent); transition: 0.5s; }
+        .access-btn:hover { border-color: var(--red); color: var(--text); box-shadow: 0 0 30px rgba(138,28,28,0.15); }
+        .access-btn:hover::before { left: 100%; }
+        
+        @keyframes breathe { 0%, 100% { opacity: 0.7; transform: scale(0.98); } 50% { opacity: 1; text-shadow: 0 0 50px var(--red); transform: scale(1); } }
 
-        /* === RESPONSIVIDADE (AJUSTADA PARA MANTER HUD LATERAL) === */
+        /* === RESPONSIVIDADE === */
         @media (max-width: 1024px) {
-            /* Removi o código que transformava em Flex Column. Agora o grid permanece. */
-            
-            .stage {
-                padding: 30px 20px; /* Reduzi apenas o padding para caber melhor */
-            }
-
-            /* Ajustes apenas de tamanho de fonte, sem mudar a posição do menu */
-            .header-meta { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .stage { padding: 30px 20px; }
+            .header-meta { flex-direction: column; align-items: flex-start; gap: 20px; }
             .timer-box { text-align: left; }
-            .timer-val { font-size: 1.4rem; }
-            h2 { font-size: 1.6rem; }
+            .timer-val { font-size: 1.5rem; }
+            h2 { font-size: 1.8rem; }
             .intro-title { font-size: 2.5rem; letter-spacing: 5px; }
-            
-            /* Ocultar tooltip no celular pois não tem mouse hover */
             .nav-item .tooltip { display: none; }
+        }
+        
+        @media (max-width: 600px) {
+            /* Melhoria Mobile: Grade em 1 coluna */
+            .gallery-grid { grid-template-columns: 1fr; }
+            .hud { padding-top: 20px; width: 60px; }
+            #main-ui { grid-template-columns: 60px 1fr; }
+            .nav-item { width: 40px; height: 40px; font-size: 1.2rem; }
+            .event::after { left: -34px; } 
+            .timeline { margin-left: 0; padding-left: 30px; }
         }
     </style>
 </head>
 <body>
+
+    <div class="stars"></div>
 
     <div id="intro">
         <div class="intro-title">Det & Liz</div>
@@ -169,7 +202,7 @@
                 </div>
                 <div class="timer-box">
                     <div class="timer-label">Tempo Juntos</div>
-                    <div class="timer-val" id="clock">00d 00h 00m</div>
+                    <div class="timer-val" id="clock">00d 00h 00m <span>00s</span></div>
                 </div>
             </header>
 
@@ -209,6 +242,7 @@
         function unlock() {
             const intro = document.getElementById('intro');
             intro.style.opacity = '0';
+            intro.style.pointerEvents = 'none'; // Previne cliques durante fade out
             setTimeout(() => {
                 intro.style.display = 'none';
                 document.getElementById('main-ui').style.opacity = '1';
@@ -225,17 +259,17 @@
                     <div class="subtitle">Simplesmente nós dois.</div>
                     
                     <div class="music-terminal">
-                        <div style="font-size:0.7rem; color:var(--red); letter-spacing:3px; margin-bottom:20px; text-transform:uppercase;">Tocando no Coração</div>
+                        <div style="font-size:0.65rem; color:var(--red); letter-spacing:4px; margin-bottom:25px; text-transform:uppercase; opacity:0.8;">Tocando no Coração</div>
                         <div id="lyrics-display" class="lyric-text">"Carregando..."</div>
                         
-                        <a href="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" target="_blank" class="spotify-btn">
+                        <a href="#" class="spotify-btn">
                             Abrir Nossa Playlist
                         </a>
                     </div>
 
-                    <div style="margin-top: 60px; text-align:center;">
-                        <div style="font-size:3rem; color:var(--red); margin-bottom:20px;">❝</div>
-                        <div style="font-family: var(--font-display); font-size: 1.1rem; color: #ccc; line-height: 1.8; max-width: 600px; margin: 0 auto;">
+                    <div style="margin-top: 70px; text-align:center;">
+                        <div style="font-size:3rem; color:var(--red); margin-bottom:10px; opacity:0.5;">❝</div>
+                        <div style="font-family: var(--font-display); font-size: 1.1rem; color: #bbb; line-height: 1.9; max-width: 600px; margin: 0 auto; letter-spacing: 0.5px;">
                             quem náO sabe o que quer,
                             acaba perdendo 0 que
                             tem, e as vezes descobre
@@ -254,17 +288,17 @@
                         <div class="event">
                             <div class="event-date">21.01.2026</div>
                             <div class="event-title">O Começo de Tudo</div>
-                            <div class="event-desc">O dia que mudou nossas vidas. Quando decidimos que caminharíamos juntos.</div>
+                            <div class="event-desc">O dia que mudou nossas vidas. Quando decidimos que caminharíamos juntos e que o player 1 encontrou seu player 2.</div>
                         </div>
                         <div class="event">
                             <div class="event-date">22.01.2026</div>
                             <div class="event-title">Primeira partida de Free Fire</div>
-                            <div class="event-desc">Lembra daquele x1? insano demais.</div>
+                            <div class="event-desc">Lembra daquele x1? insano demais. Foi ali que a química bateu até na troca de tiro.</div>
                         </div>
                         <div class="event">
                             <div class="event-date">HOJE</div>
                             <div class="event-title">Cada Dia Mais</div>
-                            <div class="event-desc">Construindo nossa história, um dia de cada vez.</div>
+                            <div class="event-desc">Construindo nossa história, um dia de cada vez, subindo de patente na vida juntos.</div>
                         </div>
                     </div>
                 </div>
@@ -272,11 +306,11 @@
             notes: `
                 <div class="content-gate">
                     <h2>Mural de Memórias</h2>
-                    <div class="subtitle">Nossos Momentos.</div>
+                    <div class="subtitle">Nossos Momentos & Prints.</div>
                     
                     <div class="gallery-grid">
                         <div class="hub-card">
-                            <div class="note-title">Sobre sua picareta</div>
+                            <div class="note-title">Sobre sua picareta <span>★</span></div>
                             <div class="note-content">
                                 "O jeito que vc me mostra essa picaretona me encanta rs"
                             </div>
@@ -288,7 +322,7 @@
                             <div class="photo-caption">Nosso futuro fiote.</div>
                         </div>
                         <div class="hub-card">
-                            <div class="note-title">Nerdice</div>
+                            <div class="note-title">Nerdice <span>♥</span></div>
                             <div class="note-content">
                                 "toma vergonha, ninguém te ama, but..."
                             </div>
@@ -300,13 +334,13 @@
                             <div class="photo-caption">Nerdola.</div>
                         </div>
                         <div class="hub-card">
-                            <div class="note-title">Lembrete Diário</div>
+                            <div class="note-title">Lembrete Diário <span>!</span></div>
                             <div class="note-content">
                                 "Não esquece o gfzão de lei"
                             </div>
                         </div>
                         <div class="hub-card">
-                            <div class="note-title">Meta Anual</div>
+                            <div class="note-title">Meta Anual <span>$</span></div>
                             <div class="note-content">
                                 "x1 no free fire valendo robux"
                             </div>
@@ -350,21 +384,22 @@
         function updateClock() {
             const now = new Date();
             const diff = now - startDate;
+            
             const d = Math.floor(diff / (1000*60*60*24));
             const h = Math.floor((diff/(1000*60*60))%24);
             const m = Math.floor((diff/(1000*60))%60);
+            const s = Math.floor((diff/1000)%60); // Adicionado Segundos
+            
             const clockEl = document.getElementById('clock');
-            if(clockEl) clockEl.innerText = `${d}d ${h}h ${m}m`;
+            // Formatação com zero à esquerda para ficar mais bonito
+            const hh = h < 10 ? '0'+h : h;
+            const mm = m < 10 ? '0'+m : m;
+            const ss = s < 10 ? '0'+s : s;
+
+            if(clockEl) clockEl.innerHTML = `${d}d ${hh}h ${mm}m <span>${ss}s</span>`;
         }
         setInterval(updateClock, 1000);
         updateClock();
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
