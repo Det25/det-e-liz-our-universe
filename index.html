@@ -2,14 +2,14 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>Det & Liz | Our Universe</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
 
     <meta property="og:title" content="Det & Liz | Our Universe">
     <meta property="og:description" content="De todas as estrelas, você foi a que mais brilhou.">
-    <meta name="theme-color" content="#8a1c1c">
+    <meta name="theme-color" content="#050505">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
     <style>
@@ -26,16 +26,18 @@
             --glass-border: rgba(255, 255, 255, 0.08);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: var(--text); font-family: var(--font-mono); height: 100vh; overflow: hidden; position: relative; }
+        
+        /* Uso de dvh para corrigir altura no mobile (Chrome/Samsung Internet) */
+        body { background: var(--bg); color: var(--text); font-family: var(--font-mono); height: 100vh; height: 100dvh; overflow: hidden; position: relative; }
 
         /* SCROLLBAR */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
 
-        /* --- FUNDO ESTRELADO (NOVIDADE) --- */
+        /* --- FUNDO ESTRELADO --- */
         .stars {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; /* Fica atrás de tudo, mas visível se o fundo for transparente */
             background-image: 
                 radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
                 radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
@@ -44,7 +46,7 @@
                 radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0));
             background-repeat: repeat;
             background-size: 200px 200px;
-            opacity: 0.3;
+            opacity: 0.4;
             animation: twinkle 10s infinite linear;
         }
         @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-200px); } }
@@ -53,9 +55,12 @@
         #main-ui { 
             display: grid; 
             grid-template-columns: 80px 1fr; 
-            height: 100vh; 
+            height: 100vh;
+            height: 100dvh; 
             opacity: 0; 
             transition: opacity 1.5s ease-in-out; 
+            position: relative;
+            z-index: 10; /* Acima das estrelas */
         }
         
         /* --- HUD (MENU LATERAL) --- */
@@ -66,18 +71,18 @@
             flex-direction: column; 
             align-items: center; 
             padding-top: 40px; 
-            background: rgba(5,5,5,0.85); 
-            backdrop-filter: blur(10px); /* Efeito Vidro */
+            background: rgba(5,5,5,0.7); /* Mais transparente para ver estrelas levemente */
+            backdrop-filter: blur(15px); 
             z-index: 10; 
         }
 
-        .nav-item { margin-bottom: 40px; color: var(--dim); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-size: 1.5rem; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; }
+        .nav-item { margin-bottom: 40px; color: var(--dim); transition: 0.4s; font-size: 1.5rem; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; }
         .nav-item:hover, .nav-item.active { color: var(--red); text-shadow: 0 0 15px var(--red-glow); transform: scale(1.15); background: rgba(255, 46, 46, 0.05); }
         
         .nav-item .tooltip { position: absolute; left: 60px; background: rgba(0,0,0,0.9); border: 1px solid var(--red); padding: 5px 12px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; z-index: 20; border-radius: 2px; box-shadow: 0 0 10px var(--red-glow); }
         .nav-item:hover .tooltip { opacity: 1; left: 70px; }
 
-        .hud-footer { margin-top: auto; margin-bottom: 20px; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--dim); font-size: 0.6rem; letter-spacing: 2px; opacity: 0.4; }
+        .hud-footer { margin-top: auto; margin-bottom: 20px; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--dim); font-size: 0.55rem; letter-spacing: 2px; opacity: 0.4; white-space: nowrap; }
 
         /* --- PALCO PRINCIPAL --- */
         .stage { 
@@ -103,14 +108,18 @@
         h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 10px; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .subtitle { color: var(--red); font-size: 0.85rem; margin-bottom: 40px; letter-spacing: 4px; text-transform: uppercase; opacity: 0.9; }
         
-        .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); width: 100%; }
+        .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); width: 100%; padding-bottom: 50px; }
         @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* FRASE FINAL (FIX PARA MOBILE) */
+        .quote-container { margin-top: 70px; text-align: center; padding: 0 10px; }
+        .quote-icon { font-size: 3rem; color: var(--red); margin-bottom: 10px; opacity: 0.5; }
+        .quote-text { font-family: var(--font-display); font-size: 1.1rem; color: #bbb; line-height: 1.9; max-width: 600px; margin: 0 auto; letter-spacing: 0.5px; }
 
         /* MÚSICA */
         .music-terminal { border: 1px solid var(--red-dim); background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); padding: 50px; text-align: center; border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .lyric-text { font-family: var(--font-display); font-size: 1.6rem; font-style: italic; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s; color: #fff; text-shadow: 0 0 15px rgba(138,28,28,0.4); line-height: 1.4; }
         .song-info { display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--red); margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; font-style: normal; }
-        
         .spotify-btn { margin-top: 35px; display: inline-block; font-size: 0.7rem; letter-spacing: 3px; color: var(--text); text-decoration: none; border: 1px solid var(--red-dim); padding: 12px 30px; transition: 0.3s; text-transform: uppercase; border-radius: 2px; }
         .spotify-btn:hover { background: var(--red-glow); border-color: var(--red); box-shadow: 0 0 20px var(--red-glow); }
 
@@ -138,7 +147,14 @@
         .photo-caption { font-size: 0.75rem; color: #888; font-style: italic; text-align: center; margin-top: 5px; }
 
         /* INTRO */
-        #intro { position: fixed; inset: 0; background: #020202; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: opacity 0.8s ease; }
+        #intro { 
+            position: fixed; inset: 0; 
+            background: rgba(2, 2, 2, 0.85); /* Fundo translúcido para ver as estrelas */
+            backdrop-filter: blur(3px); 
+            z-index: 100; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            transition: opacity 0.8s ease; 
+        }
         .intro-title { font-family: var(--font-display); font-size: 4rem; letter-spacing: 12px; color: #fff; margin-bottom: 40px; text-shadow: 0 0 30px var(--red-glow); animation: breathe 4s infinite ease-in-out; }
         .access-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--dim); padding: 18px 60px; font-family: var(--font-mono); letter-spacing: 6px; font-size: 0.8rem; transition: 0.5s; cursor: pointer; text-transform: uppercase; position: relative; overflow: hidden; }
         .access-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 46, 46, 0.2), transparent); transition: 0.5s; }
@@ -159,13 +175,22 @@
         }
         
         @media (max-width: 600px) {
-            /* Melhoria Mobile: Grade em 1 coluna */
+            /* Mobile: Grade em 1 coluna */
             .gallery-grid { grid-template-columns: 1fr; }
+            /* Mobile: Menu lateral mais fino e ícones menores */
             .hud { padding-top: 20px; width: 60px; }
             #main-ui { grid-template-columns: 60px 1fr; }
-            .nav-item { width: 40px; height: 40px; font-size: 1.2rem; }
+            .nav-item { width: 35px; height: 35px; font-size: 1rem; margin-bottom: 30px; }
+            .hud-footer { margin-bottom: 100px; } /* Sobe o crédito para não cortar */
+            
+            /* Ajuste da Timeline */
             .event::after { left: -34px; } 
             .timeline { margin-left: 0; padding-left: 30px; }
+            
+            /* Correção da Frase (Quote) */
+            .quote-text { font-size: 0.95rem; width: 100%; padding: 0 5px; }
+            .music-terminal { padding: 30px 15px; }
+            .lyric-text { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -242,7 +267,7 @@
         function unlock() {
             const intro = document.getElementById('intro');
             intro.style.opacity = '0';
-            intro.style.pointerEvents = 'none'; // Previne cliques durante fade out
+            intro.style.pointerEvents = 'none'; 
             setTimeout(() => {
                 intro.style.display = 'none';
                 document.getElementById('main-ui').style.opacity = '1';
@@ -267,9 +292,9 @@
                         </a>
                     </div>
 
-                    <div style="margin-top: 70px; text-align:center;">
-                        <div style="font-size:3rem; color:var(--red); margin-bottom:10px; opacity:0.5;">❝</div>
-                        <div style="font-family: var(--font-display); font-size: 1.1rem; color: #bbb; line-height: 1.9; max-width: 600px; margin: 0 auto; letter-spacing: 0.5px;">
+                    <div class="quote-container">
+                        <div class="quote-icon">❝</div>
+                        <div class="quote-text">
                             quem náO sabe o que quer,
                             acaba perdendo 0 que
                             tem, e as vezes descobre
@@ -388,10 +413,9 @@
             const d = Math.floor(diff / (1000*60*60*24));
             const h = Math.floor((diff/(1000*60*60))%24);
             const m = Math.floor((diff/(1000*60))%60);
-            const s = Math.floor((diff/1000)%60); // Adicionado Segundos
+            const s = Math.floor((diff/1000)%60); 
             
             const clockEl = document.getElementById('clock');
-            // Formatação com zero à esquerda para ficar mais bonito
             const hh = h < 10 ? '0'+h : h;
             const mm = m < 10 ? '0'+m : m;
             const ss = s < 10 ? '0'+s : s;
