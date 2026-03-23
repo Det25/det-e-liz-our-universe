@@ -1144,8 +1144,28 @@
                 font-size: 1.3rem;
             }
 
+            .eclipse-theme {
+                padding: 30px 20px;
+            }
             .eclipse-theme .secret-title {
-                font-size: 1.6rem;
+                font-size: 1.4rem;
+                margin-bottom: 15px;
+            }
+            .eclipse-img {
+                width: 90px;
+                height: 90px;
+                margin-bottom: 15px;
+            }
+            .eclipse-theme .secret-text p {
+                font-size: 0.85rem;
+                line-height: 1.5;
+                margin-bottom: 12px;
+            }
+            .eclipse-theme .secret-text p:last-child {
+                margin-top: 15px;
+            }
+            .eclipse-theme .secret-close {
+                margin-top: 25px;
             }
         }
 
@@ -1160,7 +1180,8 @@
             max-width: 650px;
             text-align: center;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            max-height: 90vh;
             border-radius: 8px;
             padding: 50px 40px;
         }
@@ -1453,7 +1474,8 @@
                     <!-- Easter Egg Trigger: 3 cliques chamam onHeartClick() -->
                     <div id="secret-heart" onclick="triggerSecret()"
                         style="margin-top: 50px; font-size: 4rem; color: var(--red); cursor: pointer; transition: all 0.3s; display: inline-block;">
-                        <i class="ph ph-planet"></i></div>
+                        <i class="ph ph-planet"></i>
+                    </div>
                 </div>
 
             </div>
