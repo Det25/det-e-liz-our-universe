@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Det & Liz | Our Universe</title>
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><rect width='256' height='256' fill='none'/><circle cx='128' cy='128' r='84' fill='none' stroke='%23ff2e2e' stroke-miterlimit='10' stroke-width='24'/><ellipse cx='128' cy='128' rx='120' ry='40' transform='translate(-53.02 128) rotate(-45)' fill='none' stroke='%23ff2e2e' stroke-linecap='round' stroke-linejoin='round' stroke-width='24'/></svg>">
 
     <meta property="og:title" content="Det & Liz | Our Universe">
     <meta property="og:description" content="De todas as estrelas, você foi a que mais brilhou.">
     <meta name="theme-color" content="#050505">
 
-    <!-- Fonts com display=swap para carregamento otimizado -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@300;400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@300;400&family=Autography&display=swap"
         rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
         /* ============================
@@ -875,6 +875,165 @@
         }
 
         /* ============================
+           GALERIA POLAROID
+           ============================ */
+        .gallery-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 40px;
+            padding-bottom: 50px;
+        }
+
+        .polaroid {
+            background: #fff;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s ease;
+            position: relative;
+            cursor: pointer;
+            width: 250px;
+            transform: rotate(calc(var(--r, 0) * 2deg));
+        }
+
+        .polaroid:nth-child(even) {
+            --r: 2;
+        }
+
+        .polaroid:nth-child(odd) {
+            --r: -2;
+        }
+
+        .polaroid:nth-child(3n) {
+            --r: 3;
+        }
+
+        .polaroid:nth-child(4n) {
+            --r: -3;
+        }
+
+        .polaroid:hover {
+            transform: scale(1.1) rotate(0deg);
+            box-shadow: 0 20px 40px rgba(255, 46, 46, 0.3);
+            z-index: 10;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            filter: grayscale(60%) sepia(30%) contrast(110%);
+            transition: filter 0.5s ease;
+        }
+
+        .polaroid:hover img {
+            filter: grayscale(0%) sepia(0%) contrast(100%);
+        }
+
+        .polaroid-caption {
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-mono);
+            color: #111;
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ============================
+           MODAL SECRETO (EASTER EGG)
+           ============================ */
+        #secret-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #secret-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .secret-content {
+            max-width: 600px;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 2s 1s ease;
+            padding: 40px;
+            border: 1px solid var(--red-glow);
+            box-shadow: 0 0 50px rgba(138, 28, 28, 0.1);
+        }
+
+        #secret-modal.active .secret-content {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .secret-title {
+            color: var(--red);
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px var(--red);
+        }
+
+        .secret-text {
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            line-height: 2;
+            color: #ddd;
+        }
+
+        .secret-close {
+            margin-top: 50px;
+            font-size: 0.75rem;
+            color: var(--dim);
+            cursor: pointer;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .secret-close:hover {
+            color: var(--red);
+        }
+
+        /* ============================
+           TYPEWRITER CURSOR
+           ============================ */
+        .typewriter-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.1rem;
+            background-color: var(--red);
+            vertical-align: middle;
+            margin-left: 5px;
+            animation: blinker 1s cubic-bezier(1, 0, 0, 1) infinite;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0.0;
+            }
+        }
+
+        /* ============================
            RESPONSIVIDADE
            ============================ */
         @media (max-width: 1024px) {
@@ -965,6 +1124,119 @@
             .letter-img {
                 height: 200px;
             }
+
+            /* Galeria Polaroid Mobile */
+            .polaroid {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .polaroid img {
+                height: 250px;
+            }
+
+            /* Secret Modal Mobile */
+            .secret-content {
+                padding: 30px 20px;
+            }
+
+            .secret-title {
+                font-size: 1.3rem;
+            }
+
+            .eclipse-theme .secret-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* ============================
+           ECLIPSE THEME (EASTER EGG)
+           ============================ */
+        .eclipse-theme {
+            background: rgba(5, 5, 8, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.9), 0 0 40px rgba(200, 200, 255, 0.05);
+            backdrop-filter: blur(20px);
+            max-width: 650px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            padding: 50px 40px;
+        }
+
+        .eclipse-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 30px auto;
+            display: block;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+            animation: eclipsePulse 6s infinite alternate;
+        }
+
+        @keyframes eclipsePulse {
+            from {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 0 10px rgba(200, 200, 255, 0.2);
+            }
+
+            to {
+                box-shadow: 0 0 50px rgba(255, 255, 255, 0.3), 0 0 20px rgba(200, 200, 255, 0.4);
+            }
+        }
+
+        .eclipse-theme .secret-title {
+            color: #fff;
+            text-shadow: 0 0 20px rgba(200, 200, 255, 0.5);
+            font-size: 2rem;
+            letter-spacing: 5px;
+            margin-bottom: 25px;
+        }
+
+        .eclipse-theme .secret-text {
+            text-align: justify;
+        }
+
+        .eclipse-theme .secret-text p {
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.9;
+            color: #ccc;
+        }
+
+        .eclipse-theme .secret-text p:last-child {
+            color: #fff;
+            font-weight: bold;
+            font-style: italic;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 0;
+        }
+
+        .eclipse-glow {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(200, 200, 255, 0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .eclipse-theme .secret-close {
+            color: rgba(200, 200, 255, 0.5);
+            position: relative;
+            z-index: 10;
+            margin-top: 40px;
+        }
+
+        .eclipse-theme .secret-close:hover {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
@@ -988,15 +1260,19 @@
     <div id="main-ui">
         <aside class="hud">
             <div class="nav-item active" onclick="loadTab('dash', this)">
-                <span>◈</span>
+                <i class="ph ph-planet"></i>
                 <div class="tooltip">Início</div>
             </div>
+            <div class="nav-item" onclick="loadTab('galeria', this)">
+                <i class="ph ph-squares-four"></i>
+                <div class="tooltip">Mural</div>
+            </div>
             <div class="nav-item" onclick="loadTab('time', this)">
-                <span>∞</span>
+                <i class="ph ph-infinity"></i>
                 <div class="tooltip">Linha do Tempo</div>
             </div>
             <div class="nav-item" onclick="loadTab('cartas', this)">
-                <span>✉</span>
+                <i class="ph ph-envelope-simple"></i>
                 <div class="tooltip">Cartas</div>
             </div>
 
@@ -1174,10 +1450,32 @@
                         <br><br>
                         Para: <span style="color:var(--red); font-weight:bold;">Flávio N.</span>
                     </div>
-                    <div style="margin-top: 50px; font-size: 3rem; color: var(--red);">❤</div>
+                    <!-- Easter Egg Trigger: 3 cliques chamam onHeartClick() -->
+                    <div id="secret-heart" onclick="triggerSecret()"
+                        style="margin-top: 50px; font-size: 4rem; color: var(--red); cursor: pointer; transition: all 0.3s; display: inline-block;">
+                        <i class="ph ph-planet"></i></div>
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <!-- Modal Carta Secreta (Easter Egg) -->
+    <div id="secret-modal">
+        <div class="secret-content eclipse-theme">
+            <div class="eclipse-glow"></div>
+            <img src="assets/img/eclipse.png" alt="Eclipse" class="eclipse-img">
+            <div class="secret-title">Nosso Eclipse</div>
+            <div class="secret-text">
+                <p>Palavras nunca foram o meu forte, então decidi compilar o que sinto na linguagem que faz sentido pra
+                    mim. Foi ela que usei para criar o nosso próprio universo.</p>
+                <p>Um lugar onde temos uma sincronia perfeita, assim como o Sol e a Lua. Na lógica do espaço, o Sol é
+                    400 vezes maior, mas está exatas 400 vezes mais longe. É essa proporção absurda que faz dois corpos
+                    tão diferentes se encaixarem com perfeição geométrica num eclipse. Onde um excede, o outro compensa.
+                </p>
+                <p>Neste nosso sistema, cada lógica, cada função e cada detalhe aqui... é tudo sobre você.</p>
+            </div>
+            <div class="secret-close" onclick="closeSecret()">[ Voltar ao universo ]</div>
         </div>
     </div>
 
@@ -1258,13 +1556,39 @@
                                 <a href="https://open.spotify.com/playlist/1yWU7VjQraPuDQulsBFIRb?si=ffec894c8fe54700" target="_blank" rel="noopener" class="spotify-btn">Abrir Nossa Playlist</a>
                             </div>
                             <div class="quote-container">
-                                <div class="quote-icon">❝</div>
-                                <div class="quote-text">
-                                    Estar com você é como cruzar o horizonte de eventos, um caminho sem volta, onde tudo o que eu conhecia, desaparece, para dar lugar a um novo universo, onde só você importa.
+                                <div class="quote-icon" style="font-size: 2.2rem; transform: translateY(5px);"><i class="ph ph-quotes"></i></div>
+                                <div class="quote-text" id="dash-quote">
                                 </div>
                             </div>
                         </div>`;
                     startLyricsAnimation();
+                    setTimeout(() => startTypewriter(), 500);
+                }
+                else if (key === 'galeria') {
+                    container.innerHTML = `
+                        <div class="content-gate">
+                            <h2>Mural</h2>
+                            <div class="subtitle">Fragmentos de nós</div>
+                            
+                            <div class="gallery-grid">
+                                <div class="polaroid">
+                                    <img src="assets/img/maos.png" alt="Mãos" loading="lazy">
+                                    <div class="polaroid-caption">Conexão</div>
+                                </div>
+                                <div class="polaroid">
+                                    <img src="assets/img/rosa.png" alt="Rosa" loading="lazy">
+                                    <div class="polaroid-caption">Essência</div>
+                                </div>
+                                <div class="polaroid">
+                                    <img src="assets/img/lua.png" alt="Lua" loading="lazy">
+                                    <div class="polaroid-caption">Distância</div>
+                                </div>
+                                <div class="polaroid">
+                                    <img src="assets/img/flores.png" alt="Flores" loading="lazy">
+                                    <div class="polaroid-caption">Destino</div>
+                                </div>
+                            </div>
+                        </div>`;
                 }
                 else if (key === 'time') {
                     container.innerHTML = `
@@ -1296,7 +1620,7 @@
                             
                             <div class="single-letter-container">
                                 <div class="letter-card" onclick="openLetter()">
-                                    <div class="letter-icon">✉</div>
+                                    <div class="letter-icon"><i class="ph ph-envelope-open"></i></div>
                                     <div class="letter-title">NOITES EM CLARO PENSANDO EM VOCÊ</div>
                                     <div class="letter-desc">Toque para ler a carta completa</div>
                                 </div>
@@ -1336,7 +1660,10 @@
 
         // Fechar com ESC
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLetter();
+            if (e.key === 'Escape') {
+                closeLetter();
+                closeSecret();
+            }
         });
 
         /* ============================
@@ -1386,6 +1713,60 @@
                     el.style.opacity = 1;
                 }, 800);
             }, 6000);
+        }
+
+        /* ============================
+           TYPEWRITER E EASTER EGG
+           ============================ */
+        let typeTimeout;
+        function startTypewriter() {
+            if (typeTimeout) clearTimeout(typeTimeout);
+            const el = document.getElementById('dash-quote');
+            if (!el) return;
+            el.innerHTML = '';
+
+            const text = "Estar com você é como cruzar o horizonte de eventos, um caminho sem volta, onde tudo o que eu conhecia, desaparece, para dar lugar a um novo universo, onde só você importa.";
+            let i = 0;
+            const cursor = document.createElement('span');
+            cursor.className = 'typewriter-cursor';
+
+            function type() {
+                if (i < text.length) {
+                    el.innerHTML = text.substring(0, i + 1);
+                    el.appendChild(cursor);
+                    i++;
+                    typeTimeout = setTimeout(type, 35); // Velocidade de digitação
+                }
+            }
+            type();
+        }
+
+        let heartClicks = 0;
+        let heartTimer;
+
+        function triggerSecret() {
+            heartClicks++;
+            const heart = document.getElementById('secret-heart');
+            heart.style.transform = `scale(${1 + heartClicks * 0.2})`;
+            heart.style.textShadow = `0 0 ${heartClicks * 15}px var(--red)`;
+
+            clearTimeout(heartTimer);
+            heartTimer = setTimeout(() => {
+                heartClicks = 0;
+                heart.style.transform = 'scale(1)';
+                heart.style.textShadow = 'none';
+            }, 2000);
+
+            if (heartClicks >= 3) {
+                heartClicks = 0;
+                document.getElementById('secret-modal').classList.add('active');
+            }
+        }
+
+        function closeSecret() {
+            document.getElementById('secret-modal').classList.remove('active');
+            document.getElementById('secret-heart').style.transform = 'scale(1)';
+            document.getElementById('secret-heart').style.textShadow = 'none';
         }
 
         /* ============================
