@@ -1,250 +1,1003 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
+
     <title>Det & Liz | Our Universe</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
 
     <meta property="og:title" content="Det & Liz | Our Universe">
     <meta property="og:description" content="De todas as estrelas, você foi a que mais brilhou.">
     <meta name="theme-color" content="#050505">
 
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <!-- Fonts com display=swap para carregamento otimizado -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@300;400&display=swap"
+        rel="stylesheet">
+
     <style>
+        /* ============================
+           DESIGN TOKENS
+           ============================ */
         :root {
-            --bg: #050505; 
-            --red: #ff2e2e; 
+            --bg: #050505;
+            --red: #ff2e2e;
             --red-glow: rgba(255, 46, 46, 0.4);
             --red-dim: rgba(138, 28, 28, 0.3);
-            --text: #e0e0e0; 
+            --text: #e0e0e0;
             --dim: #888;
-            --font-display: 'Cinzel', serif; 
+            --font-display: 'Cinzel', serif;
             --font-mono: 'JetBrains Mono', monospace;
             --glass: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { background: var(--bg); color: var(--text); font-family: var(--font-mono); height: 100vh; height: 100dvh; overflow: hidden; position: relative; }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+        /* ============================
+           RESET & BASE
+           ============================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        /* --- ESTRELAS --- */
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-mono);
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ============================
+           SCROLLBAR
+           ============================ */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--red);
+            border-radius: 2px;
+        }
+
+        /* ============================
+           ESTRELAS (PARALLAX DUPLA CAMADA)
+           ============================ */
         .stars {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
-            background-image: 
-                radial-gradient(1.5px 1.5px at 20px 30px, #fff, rgba(0,0,0,0)),
-                radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(1.5px 1.5px at 50px 160px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2.5px 2.5px at 130px 80px, #fff, rgba(0,0,0,0));
-            background-repeat: repeat;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            pointer-events: none;
+            z-index: 1;
+            will-change: transform;
+        }
+
+        .stars-layer-1,
+        .stars-layer-2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .stars-layer-1 {
+            background-image:
+                radial-gradient(1.5px 1.5px at 20px 30px, rgba(255, 255, 255, 0.9), transparent),
+                radial-gradient(1px 1px at 40px 70px, rgba(255, 255, 255, 0.7), transparent),
+                radial-gradient(1.5px 1.5px at 50px 160px, rgba(255, 255, 255, 0.8), transparent),
+                radial-gradient(2px 2px at 90px 40px, rgba(255, 255, 255, 1), transparent),
+                radial-gradient(1px 1px at 160px 120px, rgba(255, 255, 255, 0.6), transparent);
             background-size: 200px 200px;
-            opacity: 0.8; 
-            animation: twinkle 8s infinite linear;
-        }
-        @keyframes twinkle { from { transform: translateY(0); } to { transform: translateY(-200px); } }
-
-        /* --- LAYOUT --- */
-        #main-ui { 
-            display: grid; 
-            grid-template-columns: 80px 1fr; 
-            height: 100vh; height: 100dvh; 
-            opacity: 0; 
-            transition: opacity 1.5s ease-in-out; 
-            position: relative; z-index: 10;
-        }
-        
-        .hud { 
-            grid-column: 1; 
-            border-right: 1px solid var(--glass-border); 
-            display: flex; flex-direction: column; align-items: center; 
-            padding-top: 40px; 
-            background: rgba(5,5,5,0.7); 
-            backdrop-filter: blur(15px); 
-            z-index: 20; 
+            animation: starsDrift 60s linear infinite, starsTwinkle 4s ease-in-out infinite alternate;
         }
 
-        .nav-item { margin-bottom: 30px; color: var(--dim); transition: 0.4s; font-size: 1.4rem; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; }
-        .nav-item:hover, .nav-item.active { color: var(--red); text-shadow: 0 0 15px var(--red-glow); transform: scale(1.15); background: rgba(255, 46, 46, 0.05); }
-        .nav-item .tooltip { position: absolute; left: 60px; background: rgba(0,0,0,0.9); border: 1px solid var(--red); padding: 5px 12px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0; transition: 0.3s; pointer-events: none; white-space: nowrap; z-index: 20; border-radius: 2px; box-shadow: 0 0 10px var(--red-glow); }
-        .nav-item:hover .tooltip { opacity: 1; left: 70px; }
-
-        .hud-footer { margin-top: auto; margin-bottom: 20px; writing-mode: vertical-rl; transform: rotate(180deg); color: var(--dim); font-size: 0.55rem; letter-spacing: 2px; opacity: 0.4; white-space: nowrap; }
-
-        .stage { 
-            grid-column: 2; 
-            padding: 50px 80px; 
-            overflow-y: auto; 
-            position: relative; 
-            background: radial-gradient(circle at top right, rgba(138,28,28,0.08), transparent 70%); 
+        .stars-layer-2 {
+            background-image:
+                radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.5), transparent),
+                radial-gradient(1.5px 1.5px at 70px 150px, rgba(255, 255, 255, 0.4), transparent),
+                radial-gradient(2.5px 2.5px at 180px 30px, rgba(255, 255, 255, 0.6), transparent),
+                radial-gradient(1px 1px at 10px 100px, rgba(255, 255, 255, 0.3), transparent);
+            background-size: 250px 250px;
+            animation: starsDrift 90s linear infinite reverse, starsTwinkle 6s ease-in-out infinite alternate-reverse;
         }
-        
-        /* HEADER */
-        .header-meta { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--red-dim); padding-bottom: 20px; }
-        .sys-info { font-size: 0.8rem; color: var(--dim); line-height: 1.6; letter-spacing: 1px; }
-        .sys-info span { color: var(--text); font-weight: bold; text-transform: uppercase; }
-        .sys-info .highlight { color: var(--red); text-shadow: 0 0 5px var(--red-glow); }
-        .timer-box { text-align: right; }
-        .timer-label { font-size: 0.65rem; color: var(--dim); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; }
-        .timer-val { font-family: var(--font-display); font-size: 1.8rem; color: var(--text); text-shadow: 0 0 15px rgba(255,255,255,0.05); }
-        .timer-val span { font-size: 1rem; color: var(--dim); margin-left: 5px; }
 
-        /* TIPOGRAFIA */
-        h2 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 10px; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(to right, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { color: var(--red); font-size: 0.85rem; margin-bottom: 40px; letter-spacing: 4px; text-transform: uppercase; opacity: 0.9; }
-        
-        .content-gate { animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; transform: translateY(30px); width: 100%; padding-bottom: 50px; }
-        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes starsDrift {
+            from {
+                transform: translateY(0);
+            }
 
-        /* QUOTES */
-        .quote-container { margin-top: 60px; text-align: center; padding: 20px; border: 1px solid var(--glass-border); border-radius: 8px; background: rgba(0,0,0,0.2); }
-        .quote-icon { font-size: 2rem; color: var(--red); margin-bottom: 15px; opacity: 0.6; }
-        .quote-text { font-family: var(--font-display); font-size: 1.1rem; color: #bbb; line-height: 1.8; max-width: 650px; margin: 0 auto; letter-spacing: 0.5px; font-style: italic; }
-
-        /* MÚSICA */
-        .music-terminal { border: 1px solid var(--red-dim); background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); padding: 40px; text-align: center; border-radius: 8px; margin-bottom: 30px; }
-        .lyric-text { font-family: var(--font-display); font-size: 1.4rem; font-style: italic; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s; color: #fff; text-shadow: 0 0 15px rgba(138,28,28,0.4); line-height: 1.4; padding: 0 10px; }
-        .song-info { display: block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--red); margin-top: 20px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.8; font-style: normal; }
-        .spotify-btn { margin-top: 25px; display: inline-block; font-size: 0.7rem; letter-spacing: 3px; color: var(--text); text-decoration: none; border: 1px solid var(--red-dim); padding: 12px 30px; transition: 0.3s; text-transform: uppercase; border-radius: 2px; }
-        .spotify-btn:hover { background: var(--red-glow); border-color: var(--red); box-shadow: 0 0 20px var(--red-glow); }
-
-        /* TIMELINE */
-        .timeline { border-left: 1px solid rgba(255,255,255,0.08); margin-left: 10px; padding-left: 40px; }
-        .event { position: relative; margin-bottom: 60px; }
-        .event::after { content: ''; position: absolute; left: -44px; top: 6px; width: 7px; height: 7px; background: var(--bg); border: 1px solid var(--red); border-radius: 50%; transition: 0.3s; box-shadow: 0 0 0 4px var(--bg); }
-        .event:hover::after { background: var(--red); box-shadow: 0 0 15px var(--red), 0 0 0 4px var(--bg); }
-        .event-date { font-size: 0.7rem; color: var(--red); letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; opacity: 0.9; }
-        .event-title { font-family: var(--font-display); font-size: 1.5rem; margin-bottom: 10px; color: #fff; }
-        .event-desc { font-size: 0.9rem; color: #999; max-width: 550px; line-height: 1.7; }
-
-        /* --- CARTAS (ENVELOPE ÚNICO) --- */
-        .single-letter-container { 
-            display: flex; justify-content: center; margin-top: 40px; 
+            to {
+                transform: translateY(-50%);
+            }
         }
-        .letter-card { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.05); 
-            padding: 40px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            transition: 0.5s ease; 
+
+        @keyframes starsTwinkle {
+            from {
+                opacity: 0.6;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ============================
+           LAYOUT PRINCIPAL
+           ============================ */
+        #main-ui {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            height: 100vh;
+            height: 100dvh;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ============================
+           SIDEBAR (HUD)
+           ============================ */
+        .hud {
+            grid-column: 1;
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(15px);
+            z-index: 20;
+        }
+
+        .nav-item {
+            margin-bottom: 30px;
+            color: var(--dim);
+            transition: all 0.4s var(--transition-smooth);
+            font-size: 1.4rem;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--red);
+            text-shadow: 0 0 15px var(--red-glow);
+            transform: scale(1.15);
+            background: rgba(255, 46, 46, 0.05);
+        }
+
+        .nav-item .tooltip {
+            position: absolute;
+            left: 60px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid var(--red);
+            padding: 5px 12px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: all 0.3s var(--transition-smooth);
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 20;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--red-glow);
+        }
+
+        .nav-item:hover .tooltip {
+            opacity: 1;
+            left: 70px;
+        }
+
+        .hud-footer {
+            margin-top: auto;
+            margin-bottom: 20px;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            color: var(--dim);
+            font-size: 0.55rem;
+            letter-spacing: 2px;
+            opacity: 0.4;
+            white-space: nowrap;
+        }
+
+        /* ============================
+           PALCO (CONTEÚDO PRINCIPAL)
+           ============================ */
+        .stage {
+            grid-column: 2;
+            padding: 50px 80px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            position: relative;
+            background: radial-gradient(circle at top right, rgba(138, 28, 28, 0.08), transparent 70%);
+        }
+
+        /* ============================
+           HEADER / SISTEMA
+           ============================ */
+        .header-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--red-dim);
+            padding-bottom: 20px;
+        }
+
+        .sys-info {
+            font-size: 0.8rem;
+            color: var(--dim);
+            line-height: 1.6;
+            letter-spacing: 1px;
+        }
+
+        .sys-info span {
+            color: var(--text);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .sys-info .highlight {
+            color: var(--red);
+            text-shadow: 0 0 5px var(--red-glow);
+        }
+
+        .timer-box {
+            text-align: right;
+        }
+
+        .timer-label {
+            font-size: 0.65rem;
+            color: var(--dim);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .timer-val {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            color: var(--text);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+            animation: timerGlow 3s ease-in-out infinite alternate;
+        }
+
+        .timer-val span {
+            font-size: 1rem;
+            color: var(--dim);
+            margin-left: 5px;
+        }
+
+        @keyframes timerGlow {
+            from {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.03);
+            }
+
+            to {
+                text-shadow: 0 0 20px rgba(255, 46, 46, 0.15);
+            }
+        }
+
+        /* ============================
+           TIPOGRAFIA
+           ============================ */
+        h2 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--red);
+            font-size: 0.85rem;
+            margin-bottom: 40px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        /* ============================
+           TRANSIÇÃO DE CONTEÚDO
+           ============================ */
+        .content-gate {
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+            transform: translateY(30px);
+            width: 100%;
+            padding-bottom: 50px;
+        }
+
+        #dynamic-area {
+            transition: opacity 0.3s ease;
+        }
+
+        #dynamic-area.fading {
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================
+           CITAÇÕES (DASHBOARD)
+           ============================ */
+        .quote-container {
+            margin-top: 60px;
             text-align: center;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; max-width: 300px;
-            position: relative; overflow: hidden;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            transition: border-color 0.5s ease, box-shadow 0.5s ease;
         }
-        .letter-card::before { content:''; position: absolute; inset:0; background: linear-gradient(135deg, transparent, rgba(255,46,46,0.1)); opacity: 0; transition: 0.5s; }
-        .letter-card:hover { transform: translateY(-10px); border-color: var(--red); box-shadow: 0 15px 50px -10px rgba(255,46,46,0.2); }
-        .letter-card:hover::before { opacity: 1; }
-        
-        .letter-icon { font-size: 3rem; color: var(--dim); margin-bottom: 20px; transition: 0.5s; }
-        .letter-card:hover .letter-icon { color: var(--red); transform: scale(1.1); text-shadow: 0 0 20px var(--red); }
-        .letter-title { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 3px; color: #fff; text-transform: uppercase; }
-        .letter-desc { font-size: 0.75rem; color: #666; margin-top: 10px; letter-spacing: 1px; }
 
-        /* --- MODAL DA CARTA (LEITOR) --- */
+        .quote-container:hover {
+            border-color: rgba(255, 46, 46, 0.2);
+            box-shadow: 0 0 30px rgba(255, 46, 46, 0.05);
+        }
+
+        .quote-icon {
+            font-size: 2rem;
+            color: var(--red);
+            margin-bottom: 15px;
+            opacity: 0.6;
+            animation: floatIcon 4s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes floatIcon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .quote-text {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: #bbb;
+            line-height: 1.8;
+            max-width: 650px;
+            margin: 0 auto;
+            letter-spacing: 0.5px;
+            font-style: italic;
+        }
+
+        /* ============================
+           MÚSICA (TERMINAL)
+           ============================ */
+        .music-terminal {
+            border: 1px solid var(--red-dim);
+            border-top: 2px solid rgba(255, 46, 46, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 40px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .lyric-text {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-style: italic;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s var(--transition-smooth);
+            color: #fff;
+            text-shadow: 0 0 15px rgba(138, 28, 28, 0.4);
+            line-height: 1.4;
+            padding: 0 10px;
+        }
+
+        .song-info {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--red);
+            margin-top: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.8;
+            font-style: normal;
+        }
+
+        .spotify-btn {
+            margin-top: 25px;
+            display: inline-block;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            color: var(--text);
+            text-decoration: none;
+            border: 1px solid var(--red-dim);
+            padding: 12px 30px;
+            transition: all 0.4s var(--transition-smooth);
+            text-transform: uppercase;
+            border-radius: 2px;
+        }
+
+        .spotify-btn:hover {
+            background: var(--red-glow);
+            border-color: var(--red);
+            box-shadow: 0 0 25px var(--red-glow);
+            transform: translateY(-2px);
+        }
+
+        /* ============================
+           LINHA DO TEMPO
+           ============================ */
+        .timeline {
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            margin-left: 10px;
+            padding-left: 40px;
+        }
+
+        .event {
+            position: relative;
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: eventSlideIn 0.6s var(--transition-smooth) forwards;
+        }
+
+        .event:nth-child(1) {
+            animation-delay: 0.15s;
+        }
+
+        .event:nth-child(2) {
+            animation-delay: 0.35s;
+        }
+
+        .event:nth-child(3) {
+            animation-delay: 0.55s;
+        }
+
+        .event:nth-child(4) {
+            animation-delay: 0.75s;
+        }
+
+        .event:nth-child(5) {
+            animation-delay: 0.95s;
+        }
+
+        @keyframes eventSlideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .event::after {
+            content: '';
+            position: absolute;
+            left: -44px;
+            top: 6px;
+            width: 7px;
+            height: 7px;
+            background: var(--bg);
+            border: 1px solid var(--red);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 0 4px var(--bg);
+        }
+
+        .event:hover::after {
+            background: var(--red);
+            box-shadow: 0 0 15px var(--red), 0 0 0 4px var(--bg);
+        }
+
+        .event-date {
+            font-size: 0.7rem;
+            color: var(--red);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+
+        .event-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .event-desc {
+            font-size: 0.9rem;
+            color: #999;
+            max-width: 550px;
+            line-height: 1.7;
+        }
+
+        /* ============================
+           CARTAS (ENVELOPE)
+           ============================ */
+        .single-letter-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .letter-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.5s var(--transition-smooth);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .letter-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255, 46, 46, 0.1));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .letter-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--red);
+            box-shadow: 0 15px 50px -10px rgba(255, 46, 46, 0.2);
+        }
+
+        .letter-card:hover::before {
+            opacity: 1;
+        }
+
+        .letter-icon {
+            font-size: 3rem;
+            color: var(--dim);
+            margin-bottom: 20px;
+            transition: all 0.5s var(--transition-smooth);
+        }
+
+        .letter-card:hover .letter-icon {
+            color: var(--red);
+            transform: scale(1.1);
+            text-shadow: 0 0 20px var(--red);
+        }
+
+        .letter-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .letter-desc {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* ============================
+           MODAL DA CARTA
+           ============================ */
         #letter-modal {
-            position: fixed; inset: 0; z-index: 1000;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: 0.5s ease;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s var(--transition-smooth);
             padding: 20px;
         }
-        #letter-modal.active { opacity: 1; pointer-events: all; }
-        
+
+        #letter-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
         .modal-content {
-            background: #080808; border: 1px solid var(--glass-border);
-            width: 100%; max-width: 650px; height: 90vh;
-            border-radius: 4px; 
-            overflow-y: auto; position: relative;
-            transform: translateY(20px); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 60px rgba(0,0,0,0.9);
+            background: #080808;
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 650px;
+            height: 90vh;
+            border-radius: 4px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            position: relative;
+            transform: translateY(30px) scale(0.97);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 46, 46, 0.05);
         }
-        #letter-modal.active .modal-content { transform: translateY(0); }
 
-        .close-modal { position: sticky; top: 0; right: 0; background: #080808; border-bottom: 1px solid var(--glass-border); text-align: right; padding: 15px 25px; font-size: 2rem; color: var(--dim); cursor: pointer; z-index: 10; display: block; }
-        .close-modal:hover { color: var(--red); }
-
-        .modal-body { padding: 40px 50px; text-align: left; }
-        
-        /* ESTILO INTERNO DA CARTA */
-        .letter-section { margin-bottom: 50px; opacity: 0; animation: fadeIn 1s forwards; }
-        .letter-img { width: 100%; height: 300px; object-fit: cover; margin: 30px 0; border-radius: 2px; filter: grayscale(100%); transition: 1s; opacity: 0.9; }
-        .letter-img:hover { filter: grayscale(50%); }
-        .letter-big-title { font-family: var(--font-display); font-size: 2.2rem; color: #fff; margin-bottom: 30px; text-align: center; text-transform: uppercase; letter-spacing: 2px; line-height: 1.3; }
-        .letter-subtitle { font-family: var(--font-display); font-size: 1.4rem; color: var(--red); margin: 40px 0 20px 0; text-transform: uppercase; letter-spacing: 1px; border-left: 2px solid var(--red); padding-left: 15px; }
-        .letter-text { font-family: var(--font-mono); font-size: 1rem; color: #ccc; line-height: 2; white-space: pre-line; margin-bottom: 20px; }
-        .letter-quote { font-family: var(--font-display); font-size: 1.2rem; color: #fff; font-style: italic; text-align: center; margin: 40px 0; padding: 20px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
-        .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,46,46,0.5), transparent); margin: 60px 0; }
-
-        @keyframes fadeIn { to { opacity: 1; } }
-
-        /* INTRO */
-        #intro { 
-            position: fixed; inset: 0; 
-            background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(2px); 
-            z-index: 100; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; 
-            transition: opacity 0.8s ease; 
+        #letter-modal.active .modal-content {
+            transform: translateY(0) scale(1);
         }
-        .intro-title { font-family: var(--font-display); font-size: 4rem; letter-spacing: 12px; color: #fff; margin-bottom: 40px; text-shadow: 0 0 30px var(--red-glow); animation: breathe 4s infinite ease-in-out; }
-        .access-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--dim); padding: 18px 60px; font-family: var(--font-mono); letter-spacing: 6px; font-size: 0.8rem; transition: 0.5s; cursor: pointer; text-transform: uppercase; position: relative; overflow: hidden; }
-        .access-btn:hover { border-color: var(--red); color: var(--text); box-shadow: 0 0 30px rgba(138,28,28,0.15); }
-        
-        @keyframes breathe { 0%, 100% { opacity: 0.7; transform: scale(0.98); } 50% { opacity: 1; text-shadow: 0 0 50px var(--red); transform: scale(1); } }
 
-        /* === RESPONSIVIDADE === */
+        .close-modal {
+            position: sticky;
+            top: 0;
+            right: 0;
+            background: rgba(8, 8, 8, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            text-align: right;
+            padding: 15px 25px;
+            font-size: 2rem;
+            color: var(--dim);
+            cursor: pointer;
+            z-index: 10;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--red);
+        }
+
+        .modal-body {
+            padding: 40px 50px;
+            text-align: left;
+        }
+
+        /* ============================
+           CONTEÚDO INTERNO DA CARTA
+           ============================ */
+        .letter-section {
+            margin-bottom: 50px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .letter-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .letter-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            margin: 30px 0;
+            border-radius: 4px;
+            filter: grayscale(100%);
+            transition: all 0.8s var(--transition-smooth);
+            opacity: 0.9;
+        }
+
+        .letter-img:hover {
+            filter: grayscale(30%);
+            box-shadow: 0 0 30px rgba(255, 46, 46, 0.15);
+            opacity: 1;
+        }
+
+        .letter-big-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 30px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.3;
+        }
+
+        .letter-subtitle {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            color: var(--red);
+            margin: 40px 0 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 2px solid var(--red);
+            padding-left: 15px;
+        }
+
+        .letter-text {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: #ccc;
+            line-height: 2;
+            white-space: pre-line;
+            margin-bottom: 20px;
+        }
+
+        .letter-quote {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            color: #fff;
+            font-style: italic;
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 46, 46, 0.5), transparent);
+            margin: 60px 0;
+            transform: scaleX(0);
+            transition: transform 1s ease;
+        }
+
+        .divider.visible {
+            transform: scaleX(1);
+        }
+
+        /* ============================
+           TELA DE INTRO
+           ============================ */
+        #intro {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 1s ease;
+        }
+
+        .intro-title {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            letter-spacing: 12px;
+            color: #fff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 30px var(--red-glow);
+            animation: breathe 4s infinite ease-in-out;
+        }
+
+        .intro-subtitle {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--dim);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInSlow 2s 0.5s forwards;
+        }
+
+        @keyframes fadeInSlow {
+            to {
+                opacity: 0.7;
+            }
+        }
+
+        .access-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--dim);
+            padding: 18px 60px;
+            font-family: var(--font-mono);
+            letter-spacing: 6px;
+            font-size: 0.8rem;
+            transition: all 0.5s var(--transition-smooth);
+            cursor: pointer;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            animation: btnPulse 3s infinite ease-in-out;
+        }
+
+        .access-btn:hover {
+            border-color: var(--red);
+            color: var(--text);
+            box-shadow: 0 0 40px rgba(138, 28, 28, 0.2);
+            animation: none;
+        }
+
+        @keyframes btnPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(138, 28, 28, 0);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(138, 28, 28, 0.1);
+            }
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.7;
+                transform: scale(0.98);
+            }
+
+            50% {
+                opacity: 1;
+                text-shadow: 0 0 50px var(--red);
+                transform: scale(1);
+            }
+        }
+
+        /* ============================
+           RESPONSIVIDADE
+           ============================ */
         @media (max-width: 1024px) {
-            .stage { padding: 30px 20px; }
-            .header-meta { flex-direction: column; align-items: flex-; gap: 20px; }
-            .timer-box { text-align: left; }
-            .timer-val { font-size: 1.5rem; }
-            h2 { font-size: 1.8rem; }
-            .intro-title { font-size: 2.5rem; letter-spacing: 5px; }
-            .nav-item .tooltip { display: none; }
+            .stage {
+                padding: 30px 20px;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .timer-box {
+                text-align: left;
+            }
+
+            .timer-val {
+                font-size: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .intro-title {
+                font-size: 2.5rem;
+                letter-spacing: 5px;
+            }
+
+            .intro-subtitle {
+                font-size: 0.65rem;
+                letter-spacing: 3px;
+                padding: 0 20px;
+            }
+
+            .nav-item .tooltip {
+                display: none;
+            }
         }
-        
+
         @media (max-width: 600px) {
-            .hud { padding-top: 20px; width: 60px; }
-            #main-ui { grid-template-columns: 60px 1fr; }
-            .nav-item { width: 35px; height: 35px; font-size: 1rem; margin-bottom: 30px; }
-            .hud-footer { margin-bottom: 100px; }
-            .quote-text { font-size: 1rem; }
-            
+            .hud {
+                padding-top: 20px;
+                width: 60px;
+            }
+
+            #main-ui {
+                grid-template-columns: 60px 1fr;
+            }
+
+            .nav-item {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+                margin-bottom: 30px;
+            }
+
+            .hud-footer {
+                margin-bottom: 100px;
+            }
+
+            .quote-text {
+                font-size: 1rem;
+            }
+
             /* Modal Mobile */
-            .modal-content { height: 100vh; max-height: 100vh; border: none; border-radius: 0; }
-            .modal-body { padding: 30px 20px 80px 20px; } /* Padding bottom extra para scroll */
-            .letter-big-title { font-size: 1.5rem; }
-            .letter-text { font-size: 0.9rem; line-height: 1.8; }
-            .letter-img { height: 200px; }
+            .modal-content {
+                height: 100vh;
+                max-height: 100vh;
+                border: none;
+                border-radius: 0;
+            }
+
+            .modal-body {
+                padding: 30px 20px 80px 20px;
+            }
+
+            .letter-big-title {
+                font-size: 1.5rem;
+            }
+
+            .letter-text {
+                font-size: 0.9rem;
+                line-height: 1.8;
+            }
+
+            .letter-img {
+                height: 200px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-    <div class="stars"></div>
+    <!-- Estrelas em duas camadas (parallax) -->
+    <div class="stars">
+        <div class="stars-layer-1"></div>
+        <div class="stars-layer-2"></div>
+    </div>
 
+    <!-- Tela de Intro -->
     <div id="intro">
         <div class="intro-title">Det & Liz</div>
+        <div class="intro-subtitle">De todas as estrelas, você foi a que mais brilhou</div>
         <button class="access-btn" onclick="unlock()">Entrar</button>
     </div>
 
+    <!-- Interface Principal -->
     <div id="main-ui">
         <aside class="hud">
             <div class="nav-item active" onclick="loadTab('dash', this)">
-                <span>◈</span><div class="tooltip">Início</div>
+                <span>◈</span>
+                <div class="tooltip">Início</div>
             </div>
             <div class="nav-item" onclick="loadTab('time', this)">
-                <span>∞</span><div class="tooltip">Linha do Tempo</div>
+                <span>∞</span>
+                <div class="tooltip">Linha do Tempo</div>
             </div>
             <div class="nav-item" onclick="loadTab('cartas', this)">
-                <span>✉</span><div class="tooltip">Cartas</div>
+                <span>✉</span>
+                <div class="tooltip">Cartas</div>
             </div>
 
             <div class="hud-footer">designed by Dπt • 2026</div>
@@ -267,21 +1020,22 @@
         </main>
     </div>
 
-    <div id="letter-modal">
+    <!-- Modal da Carta -->
+    <div id="letter-modal" onclick="handleModalBackdrop(event)">
         <div class="modal-content">
             <div class="close-modal" onclick="closeLetter()">×</div>
             <div class="modal-body">
-                
+
                 <div class="letter-section">
                     <div class="letter-big-title">NOITES EM CLARO PENSANDO EM VOCÊ</div>
-                    <img src="https://media.discordapp.net/attachments/1411448071904170210/1465510618659553469/96ecb055ab77f54f4e19524af3d55433.gif?ex=69795e9f&is=69780d1f&hm=39e000c37d6ed21ef31a967be32c10bcedc3b75a582b777a9f9abcffc784022d&=&width=600&height=338" class="letter-img" alt="Rosa">
+                    <img src="assets/img/rosa.png" class="letter-img" alt="Rosa" loading="lazy">
                     <div class="letter-text">
                         Uma carta aberta, sobre infinitos momentos.
-                        
+
                         Aqueles em que passei cada noite pensando.
                         Cada frase e verso, vão ser frutos de pensamentos de uma madrugada.
                         Repletas de amor, sofrimento e saudade.
-                        
+
                         São ventos que passam pelos quartos vazios, trazendo lembranças que só a noite lembra.
                     </div>
                     <div class="letter-quote">
@@ -294,8 +1048,9 @@
 
                 <div class="letter-section">
                     <div class="letter-text">
-                        Você é aquele pensamento bom que vem, e muda todo meu humor. E entre tantos pensamentos, o que mais aparece é você.
-                        
+                        Você é aquele pensamento bom que vem, e muda todo meu humor. E entre tantos pensamentos, o que
+                        mais aparece é você.
+
                         Tem um vazio aqui, que só você sabe preencher.
                     </div>
                     <div class="letter-quote">
@@ -309,28 +1064,34 @@
                     <div class="letter-subtitle">Você</div>
                     <div class="letter-text">
                         "Pois tudo que é amor, parece com você."
-                        
-                        Nem sei dizer sobre isso, mas a única coisa que posso dizer, é que a felicidade pra mim, é nunca perder você.
-                        
+
+                        Nem sei dizer sobre isso, mas a única coisa que posso dizer, é que a felicidade pra mim, é nunca
+                        perder você.
+
                         Você é um silêncio que acalma o barulho dentro de mim.
-                        
-                        O melhor amor, não é aquele que queremos casar, ter filhos, morrer juntos, é aquele que acorda a alma e faz a gente querer ser melhor.
-                        
+
+                        O melhor amor, não é aquele que queremos casar, ter filhos, morrer juntos, é aquele que acorda a
+                        alma e faz a gente querer ser melhor.
+
                         E foi o que você fez em mim.
                     </div>
                 </div>
 
                 <div class="letter-section">
                     <div class="letter-text">
-                        Você despertou o que eu tinha de mais bonito, me fez sentir, me fez sonhar, me fez querer mais da vida.
-                        
+                        Você despertou o que eu tinha de mais bonito, me fez sentir, me fez sonhar, me fez querer mais
+                        da vida.
+
                         Um amor que deixa raízes, e que me fez olhar pra mim mesma e entender o que é sentir de verdade.
-                        
-                        Porque o melhor amor não é o que vem pra mudar a gente, mas o que vem pra nos lembrar de quem somos.
-                        
-                        E com você, eu me lembrei, do quanto posso ser leve, do quanto posso ser inteira, do quanto posso ser verdadeira.
-                        
-                        Porque o amor que acorda a alma, nunca se apaga, ele apenas se transforma, e fica ali, guardado, vivo, doendo, mesmo em silêncio.
+
+                        Porque o melhor amor não é o que vem pra mudar a gente, mas o que vem pra nos lembrar de quem
+                        somos.
+
+                        E com você, eu me lembrei, do quanto posso ser leve, do quanto posso ser inteira, do quanto
+                        posso ser verdadeira.
+
+                        Porque o amor que acorda a alma, nunca se apaga, ele apenas se transforma, e fica ali, guardado,
+                        vivo, doendo, mesmo em silêncio.
                     </div>
                     <div class="letter-quote">
                         "Em segredo, minha mente gravou o som de você rindo."
@@ -341,18 +1102,22 @@
 
                 <div class="letter-section">
                     <div class="letter-subtitle">Sentimento</div>
-                    <img src="https://media.discordapp.net/attachments/1411448071904170210/1465512292325261476/4f9b8346076815684c771735727adfff.gif?ex=6979602e&is=69780eae&hm=f0aac63899655a58925b7c75b302b4144481f36628419a172c1d2b0e7c4643f3&=&width=625&height=351" class="letter-img" alt="Mãos">
+                    <img src="assets/img/maos.png" class="letter-img" alt="Mãos" loading="lazy">
                     <div class="letter-text">
-                        Sentimento é como um rio secreto dentro de nós, às vezes corre tranquilo, às vezes transborda sem aviso.
-                        
-                        O Sentimento nos faz procurar a felicidade, e na maioria das vezes, nos decepciona sem ver. Procuramos sentimentos profundos em pessoas rasas.
-                        
-                        As risadas, os sofrimentos, as dores, os momentos, são sentimentos que nenhum amor pode substituir.
-                        
-                        E cada momento que vivemos, vai marcar pra sempre na minha vida, como se um pedaço de você tivesse ficado em mim.
-                        
+                        Sentimento é como um rio secreto dentro de nós, às vezes corre tranquilo, às vezes transborda
+                        sem aviso.
+
+                        O Sentimento nos faz procurar a felicidade, e na maioria das vezes, nos decepciona sem ver.
+                        Procuramos sentimentos profundos em pessoas rasas.
+
+                        As risadas, os sofrimentos, as dores, os momentos, são sentimentos que nenhum amor pode
+                        substituir.
+
+                        E cada momento que vivemos, vai marcar pra sempre na minha vida, como se um pedaço de você
+                        tivesse ficado em mim.
+
                         Você sabe todos os meus segredos e desejos secretos, todos os meus defeitos.
-                        
+
                         Tudo isso foi bom, fizemos história pra ficar na memória e nos acompanhar.
                     </div>
                 </div>
@@ -361,15 +1126,18 @@
 
                 <div class="letter-section">
                     <div class="letter-subtitle">Conexão</div>
-                    <img src="https://media.discordapp.net/attachments/1411448071904170210/1465512549654073384/739d0eeec7ad2aee6ac416a553566848.gif?ex=6979606b&is=69780eeb&hm=21a260296f3b0f0d9a84ac96bdb25146531d943e2c26a9133409d28750ffea27&=&width=625&height=339" class="letter-img" alt="Lua">
+                    <img src="assets/img/lua.png" class="letter-img" alt="Lua" loading="lazy">
                     <div class="letter-text">
                         Conexão é algo complexo de se entender, mas fácil de sentir.
-                        
-                        Nós dois somos como duas estrelas que mesmo distantes, não precisam se tocar para brilharem juntas.
-                        
-                        Como ondas em um oceano, se dobram, se refletem e que se colidem em movimentos que ninguém pode decifrar, mas que só fazem sentido quando estão juntas.
-                        
-                        É como se eu te encontrasse mesmo sem te procurar, como se minha história, completasse a outra parte da sua história.
+
+                        Nós dois somos como duas estrelas que mesmo distantes, não precisam se tocar para brilharem
+                        juntas.
+
+                        Como ondas em um oceano, se dobram, se refletem e que se colidem em movimentos que ninguém pode
+                        decifrar, mas que só fazem sentido quando estão juntas.
+
+                        É como se eu te encontrasse mesmo sem te procurar, como se minha história, completasse a outra
+                        parte da sua história.
                     </div>
                 </div>
 
@@ -396,7 +1164,8 @@
 
                 <div class="letter-section" style="text-align:center;">
                     <div class="letter-big-title">Créditos</div>
-                    <img src="https://media.discordapp.net/attachments/1411448071904170210/1465512737634390026/af3261c98d77e4712f24dab1994f1f08.gif?ex=69796098&is=69780f18&hm=393bf5d1385b75cc17b87a924deb5a0b39d45f4e067c25c659cbf9bd2263029f&=&width=625&height=463" class="letter-img" alt="Flores" style="max-width:300px;">
+                    <img src="assets/img/flores.png" class="letter-img" alt="Flores" loading="lazy"
+                        style="max-width:300px;">
                     <div class="letter-quote" style="border:none; background:transparent;">
                         "E vai saber, se um dia seremos nós."
                     </div>
@@ -413,8 +1182,11 @@
     </div>
 
     <script>
+        /* ============================
+           CONFIGURAÇÃO
+           ============================ */
         const startDate = new Date("2026-01-26T01:46:00");
-        
+
         const musicPlaylist = [
             { verse: "Eu disfarço, nego, minto… mas o coração sempre entrega o que sente.", song: "Chitãozinho & Xororó — Evidências" },
             { verse: "O que você fez em menos de um mês nenhuma outra fez.", song: "Matheus & Kauan — Te Assumi Pro Brasil" },
@@ -422,7 +1194,7 @@
             { verse: "É por você que canto, é por você que eu vivo... O universo conspira a nosso favor.", song: "Leandro & Leonardo" },
             { verse: "Eu quero ser pra você o que ninguém nunca foi. Quero seu amor agora e o resto depois.", song: "Cristiano Araújo" },
             { verse: "Eu troco meu destino só pra viver o seu, porque meu lugar é onde você estiver.", song: "Luan Santana" },
-            { verse: "Você me mostrou o amor… e eu te mostrei ao mundo.", song: "Henrique & Juliano" },    
+            { verse: "Você me mostrou o amor… e eu te mostrei ao mundo.", song: "Henrique & Juliano" },
             { verse: "Se for pra errar, que seja tentando te amar.", song: "Jorge & Mateus" },
             { verse: "Entre tantas pessoas, foi você quem meu coração escolheu.", song: "Victor & Leo" },
             { verse: "Tem sentimentos que a gente tenta calar, mas o coração insiste em lembrar.", song: "Zezé Di Camargo" },
@@ -440,141 +1212,205 @@
             { verse: "Enquanto houver razões eu não desisto de você.", song: "Jorge & Mateus" },
         ];
 
+        /* ============================
+           INTRO
+           ============================ */
         function unlock() {
             const intro = document.getElementById('intro');
             intro.style.opacity = '0';
-            intro.style.pointerEvents = 'none'; 
+            intro.style.pointerEvents = 'none';
             setTimeout(() => {
                 intro.style.display = 'none';
                 document.getElementById('main-ui').style.opacity = '1';
                 loadTab('dash');
-            }, 800);
+            }, 1000);
         }
 
+        /* ============================
+           SISTEMA DE ABAS (COM FADE)
+           ============================ */
         let lyricsInterval;
 
         function loadTab(key, el) {
             if (lyricsInterval) clearInterval(lyricsInterval);
-            
+
             const container = document.getElementById('dynamic-area');
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            
-            if(el) {
+
+            if (el) {
                 el.classList.add('active');
             } else {
-                if(key === 'dash') document.querySelectorAll('.nav-item')[0].classList.add('active');
+                if (key === 'dash') document.querySelectorAll('.nav-item')[0].classList.add('active');
             }
 
-            // Lógica de Renderização das Abas
-            if (key === 'dash') {
-                container.innerHTML = `
-                    <div class="content-gate">
-                        <h2>Bem-vindo(a),</h2>
-                        <div class="subtitle">Simplesmente nós dois.</div>
-                        <div class="music-terminal">
-                            <div style="font-size:0.65rem; color:var(--red); letter-spacing:4px; margin-bottom:25px; text-transform:uppercase; opacity:0.8;">Tocando no Coração</div>
-                            <div id="lyrics-display" class="lyric-text">"Carregando..."</div>
-                            <a href="https://open.spotify.com/playlist/1yWU7VjQraPuDQulsBFIRb?si=ffec894c8fe54700" class="spotify-btn">Abrir Nossa Playlist</a>
-                        </div>
-                        <div class="quote-container">
-                            <div class="quote-icon">❝</div>
-                            <div class="quote-text">
-                                Estar com você é como cruzar o horizonte de eventos, um caminho sem volta, onde tudo o que eu conhecia, desaparece, para dar lugar a um novo universo, onde só você importa.
+            // Fade-out antes de trocar o conteúdo
+            container.classList.add('fading');
+
+            setTimeout(() => {
+                if (key === 'dash') {
+                    container.innerHTML = `
+                        <div class="content-gate">
+                            <h2>Bem-vindo(a),</h2>
+                            <div class="subtitle">Simplesmente nós dois.</div>
+                            <div class="music-terminal">
+                                <div style="font-size:0.65rem; color:var(--red); letter-spacing:4px; margin-bottom:25px; text-transform:uppercase; opacity:0.8;">Tocando no Coração</div>
+                                <div id="lyrics-display" class="lyric-text">"Carregando..."</div>
+                                <a href="https://open.spotify.com/playlist/1yWU7VjQraPuDQulsBFIRb?si=ffec894c8fe54700" target="_blank" rel="noopener" class="spotify-btn">Abrir Nossa Playlist</a>
                             </div>
-                        </div>
-                    </div>`;
-                startLyricsAnimation();
-            } 
-            else if (key === 'time') {
-                container.innerHTML = `
-                    <div class="content-gate">
-                        <h2>Linha do Tempo</h2>
-                        <div class="subtitle">Momentos que marcaram a gente</div>
-                        <div class="timeline">
-
-                            <div class="event">
-                                <div class="event-date">24.01.2026</div>
-                                <div class="event-title">A carta</div>
-                                <div class="event-desc">Não foi só uma carta recebida, mas uma ideia compartilhada. Um pensamento que saiu de alguém e agora habita em mim.</div>
-                            </div>
-
-
-                            <div class="event">
-                                <div class="event-date">26.01.2026 • 01:46</div>
-                                <div class="event-title">Reencontro de Almas</div>
-                                <div class="event-desc">
-                                    Não foi só um recomeço, mas o reencontro de duas almas que já se pertenciam. Não foi um início, foi uma continuação, pois minha essência sempre soube quem era você.
+                            <div class="quote-container">
+                                <div class="quote-icon">❝</div>
+                                <div class="quote-text">
+                                    Estar com você é como cruzar o horizonte de eventos, um caminho sem volta, onde tudo o que eu conhecia, desaparece, para dar lugar a um novo universo, onde só você importa.
                                 </div>
                             </div>
+                        </div>`;
+                    startLyricsAnimation();
+                }
+                else if (key === 'time') {
+                    container.innerHTML = `
+                        <div class="content-gate">
+                            <h2>Linha do Tempo</h2>
+                            <div class="subtitle">Momentos que marcaram a gente</div>
+                            <div class="timeline">
+                                <div class="event">
+                                    <div class="event-date">24.01.2026</div>
+                                    <div class="event-title">A carta</div>
+                                    <div class="event-desc">Não foi só uma carta recebida, mas uma ideia compartilhada. Um pensamento que saiu de alguém e agora habita em mim.</div>
+                                </div>
 
-                        </div>
-                    </div>`;
-            } 
-            else if (key === 'cartas') {
-                container.innerHTML = `
-                    <div class="content-gate">
-                        <h2>Cartas</h2>
-                        <div class="subtitle">Momentos eternizados</div>
-                        
-                        <div class="single-letter-container">
-                            <div class="letter-card" onclick="openLetter()">
-                                <div class="letter-icon">✉</div>
-                                <div class="letter-title">NOITES EM CLARO PENSANDO EM VOCÊ</div>
-                                <div class="letter-desc">Toque para ler a carta completa</div>
+                                <div class="event">
+                                    <div class="event-date">26.01.2026 • 01:46</div>
+                                    <div class="event-title">Reencontro de Almas</div>
+                                    <div class="event-desc">
+                                        Não foi só um recomeço, mas o reencontro de duas almas que já se pertenciam. Não foi um início, foi uma continuação, pois minha essência sempre soube quem era você.
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>`;
-            }
+                        </div>`;
+                }
+                else if (key === 'cartas') {
+                    container.innerHTML = `
+                        <div class="content-gate">
+                            <h2>Cartas</h2>
+                            <div class="subtitle">Momentos eternizados</div>
+                            
+                            <div class="single-letter-container">
+                                <div class="letter-card" onclick="openLetter()">
+                                    <div class="letter-icon">✉</div>
+                                    <div class="letter-title">NOITES EM CLARO PENSANDO EM VOCÊ</div>
+                                    <div class="letter-desc">Toque para ler a carta completa</div>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+
+                // Fade-in após trocar conteúdo
+                container.classList.remove('fading');
+            }, 300);
         }
 
-        // --- SISTEMA DE MODAL (ABRIR CARTA) ---
+        /* ============================
+           MODAL (ABRIR / FECHAR CARTA)
+           ============================ */
         function openLetter() {
-            document.getElementById('letter-modal').classList.add('active');
+            const modal = document.getElementById('letter-modal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Scroll-reveal das seções
+            setTimeout(initScrollReveal, 100);
         }
 
         function closeLetter() {
-            document.getElementById('letter-modal').classList.remove('active');
+            const modal = document.getElementById('letter-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
         }
 
-        // --- EXTRAS ---
+        // Fechar ao clicar no backdrop (fora do conteúdo)
+        function handleModalBackdrop(e) {
+            if (e.target === document.getElementById('letter-modal')) {
+                closeLetter();
+            }
+        }
+
+        // Fechar com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLetter();
+        });
+
+        /* ============================
+           SCROLL-REVEAL (SEÇÕES DA CARTA)
+           ============================ */
+        function initScrollReveal() {
+            const modalContent = document.querySelector('.modal-content');
+            const sections = document.querySelectorAll('.letter-section, .divider');
+
+            const checkVisibility = () => {
+                const modalRect = modalContent.getBoundingClientRect();
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top < modalRect.bottom - 80) {
+                        section.classList.add('visible');
+                    }
+                });
+            };
+
+            // Verificar imediatamente
+            checkVisibility();
+
+            // Verificar ao scrollar o modal
+            modalContent.addEventListener('scroll', checkVisibility, { passive: true });
+        }
+
+        /* ============================
+           ANIMAÇÃO DE LETRAS (MÚSICAS)
+           ============================ */
         function startLyricsAnimation() {
             let index = 0;
             const el = document.getElementById('lyrics-display');
-            if(!el) return;
+            if (!el) return;
+
             const renderMusic = (idx) => {
                 const item = musicPlaylist[idx];
                 el.innerHTML = `"${item.verse}"<span class="song-info">♫ ${item.song}</span>`;
             };
+
             renderMusic(0);
+
             lyricsInterval = setInterval(() => {
-                el.style.opacity = 0; 
+                el.style.opacity = 0;
                 setTimeout(() => {
                     index = (index + 1) % musicPlaylist.length;
-                    renderMusic(index); 
-                    el.style.opacity = 1; 
-                }, 1000); 
-            }, 6000); 
+                    renderMusic(index);
+                    el.style.opacity = 1;
+                }, 800);
+            }, 6000);
         }
 
+        /* ============================
+           RELÓGIO (TEMPO JUNTOS)
+           ============================ */
         function updateClock() {
             const now = new Date();
             const diff = now - startDate;
-            const d = Math.floor(diff / (1000*60*60*24));
-            const h = Math.floor((diff/(1000*60*60))%24);
-            const m = Math.floor((diff/(1000*60))%60);
-            const s = Math.floor((diff/1000)%60); 
-            
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
             const clockEl = document.getElementById('clock');
-            if(clockEl) {
-                const hh = h < 10 ? '0'+h : h;
-                const mm = m < 10 ? '0'+m : m;
-                const ss = s < 10 ? '0'+s : s;
+            if (clockEl) {
+                const hh = String(h).padStart(2, '0');
+                const mm = String(m).padStart(2, '0');
+                const ss = String(s).padStart(2, '0');
                 clockEl.innerHTML = `${d}d ${hh}h ${mm}m <span>${ss}s</span>`;
             }
         }
+
         setInterval(updateClock, 1000);
         updateClock();
     </script>
 </body>
-</html>
 
+</html>
